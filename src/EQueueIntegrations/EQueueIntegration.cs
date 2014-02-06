@@ -20,7 +20,8 @@ namespace BankTransferSample.EQueueIntegrations
         private static CommandConsumer _commandConsumer;
         private static EventPublisher _eventPublisher;
         private static EventConsumer _eventConsumer;
-        private static CompletedCommandProcessor _completedCommandProcessor;
+        private static CommandResultSender _commandResultSender;
+        private static CommandResultProcessor _commandResultProcessor;
 
         public static ENodeConfiguration UseEQueue(this ENodeConfiguration enodeConfiguration)
         {
@@ -47,22 +48,21 @@ namespace BankTransferSample.EQueueIntegrations
             };
 
             _broker = new BrokerController().Initialize();
-            _completedCommandProcessor = new CompletedCommandProcessor(consumerSetting);
+            _commandResultProcessor = new CommandResultProcessor(consumerSetting);
 
-            configuration.SetDefault<CompletedCommandProcessor, CompletedCommandProcessor>(_completedCommandProcessor);
-
-            _commandService = new CommandService();
+            _commandService = new CommandService(_commandResultProcessor);
+            _commandResultSender = new CommandResultSender();
             _eventPublisher = new EventPublisher();
 
             configuration.SetDefault<ICommandService, CommandService>(_commandService);
             configuration.SetDefault<IEventPublisher, EventPublisher>(_eventPublisher);
 
-            _commandConsumer = new CommandConsumer(consumerSetting);
+            _commandConsumer = new CommandConsumer(consumerSetting, _commandResultSender);
             _eventConsumer = new EventConsumer(eventConsumerSetting);
 
             _commandConsumer.Subscribe("BankTransferCommandTopic");
             _eventConsumer.Subscribe("BankTransferEventTopic");
-            _completedCommandProcessor.Subscribe("BankTransferEventTopic");
+            _commandResultProcessor.Subscribe("CommandResultTopic");
 
             return enodeConfiguration;
         }
@@ -73,7 +73,8 @@ namespace BankTransferSample.EQueueIntegrations
             _commandConsumer.Start();
             _eventPublisher.Start();
             _commandService.Start();
-            _completedCommandProcessor.Start();
+            _commandResultSender.Start();
+            _commandResultProcessor.Start();
 
             WaitAllConsumerLoadBalanceComplete();
 
@@ -88,8 +89,8 @@ namespace BankTransferSample.EQueueIntegrations
             {
                 var eventConsumerAllocatedQueues = _eventConsumer.Consumer.GetCurrentQueues();
                 var commandConsumerAllocatedQueues = _commandConsumer.Consumer.GetCurrentQueues();
-                var completedCommandProcessorAllocatedQueues = _completedCommandProcessor.Consumer.GetCurrentQueues();
-                if (eventConsumerAllocatedQueues.Count() == 4 && commandConsumerAllocatedQueues.Count() == 4 && completedCommandProcessorAllocatedQueues.Count() == 4)
+                var commandResultProcessorAllocatedQueues = _commandResultProcessor.Consumer.GetCurrentQueues();
+                if (eventConsumerAllocatedQueues.Count() == 4 && commandConsumerAllocatedQueues.Count() == 4 && commandResultProcessorAllocatedQueues.Count() == 4)
                 {
                     waitHandle.Set();
                 }
