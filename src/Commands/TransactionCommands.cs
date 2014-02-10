@@ -1,5 +1,6 @@
 ﻿using System;
 using BankTransferSample.DomainEvents;
+using ECommon.Utilities;
 using ENode.Commanding;
 
 namespace BankTransferSample.Commands
@@ -7,12 +8,12 @@ namespace BankTransferSample.Commands
     /// <summary>创建一笔转账交易
     /// </summary>
     [Serializable]
-    public class CreateTransactionCommand : ProcessCommand<Guid>, ICreatingAggregateCommand
+    public class CreateTransactionCommand : ProcessCommand<ObjectId>, ICreatingAggregateCommand
     {
         public TransactionInfo TransactionInfo { get; private set; }
-        public override string ProcessId { get { return TransactionInfo.TransactionId.ToString(); } }
 
-        public CreateTransactionCommand(TransactionInfo transactionInfo) : base(transactionInfo.TransactionId)
+        public CreateTransactionCommand(TransactionInfo transactionInfo)
+            : base(transactionInfo.TransactionId)
         {
             TransactionInfo = transactionInfo;
         }
@@ -20,66 +21,60 @@ namespace BankTransferSample.Commands
     /// <summary>发起转账交易
     /// </summary>
     [Serializable]
-    public class StartTransactionCommand : ProcessCommand<Guid>
+    public class StartTransactionCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public StartTransactionCommand(Guid transactionId) : base(transactionId)
+        public StartTransactionCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }
     /// <summary>确认预转出
     /// </summary>
     [Serializable]
-    public class ConfirmDebitPreparationCommand : ProcessCommand<Guid>
+    public class ConfirmDebitPreparationCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public ConfirmDebitPreparationCommand(Guid transactionId) : base(transactionId)
+        public ConfirmDebitPreparationCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }
     /// <summary>确认预转入
     /// </summary>
     [Serializable]
-    public class ConfirmCreditPreparationCommand : ProcessCommand<Guid>
+    public class ConfirmCreditPreparationCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public ConfirmCreditPreparationCommand(Guid transactionId) : base(transactionId)
+        public ConfirmCreditPreparationCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }
     /// <summary>确认转出
     /// </summary>
     [Serializable]
-    public class ConfirmDebitCommand : ProcessCommand<Guid>
+    public class ConfirmDebitCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public ConfirmDebitCommand(Guid transactionId) : base(transactionId)
+        public ConfirmDebitCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }
     /// <summary>确认转入
     /// </summary>
     [Serializable]
-    public class ConfirmCreditCommand : ProcessCommand<Guid>
+    public class ConfirmCreditCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public ConfirmCreditCommand(Guid transactionId) : base(transactionId)
+        public ConfirmCreditCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }
     /// <summary>终止转账交易
     /// </summary>
     [Serializable]
-    public class AbortTransactionCommand : ProcessCommand<Guid>
+    public class AbortTransactionCommand : ProcessCommand<ObjectId>
     {
-        public override string ProcessId { get { return AggregateRootId.ToString(); } }
-
-        public AbortTransactionCommand(Guid transactionId) : base(transactionId)
+        public AbortTransactionCommand(ObjectId transactionId)
+            : base(transactionId)
         {
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BankTransferSample.DomainEvents;
+using ECommon.Utilities;
 using ENode.Domain;
 
 namespace BankTransferSample.Domain
@@ -15,7 +16,7 @@ namespace BankTransferSample.Domain
 
         private IList<DebitPreparation> _debitPreparations;
         private IList<CreditPreparation> _creditPreparations;
-        private IList<Guid> _completedTransactions;
+        private IList<ObjectId> _completedTransactions;
 
         #endregion
 
@@ -52,7 +53,7 @@ namespace BankTransferSample.Domain
             base.Initialize();
             _debitPreparations = new List<DebitPreparation>();
             _creditPreparations = new List<CreditPreparation>();
-            _completedTransactions = new List<Guid>();
+            _completedTransactions = new List<ObjectId>();
         }
 
         #endregion
@@ -83,7 +84,7 @@ namespace BankTransferSample.Domain
         /// </summary>
         /// <param name="transactionId"></param>
         /// <param name="amount"></param>
-        public void PrepareDebit(Guid transactionId, double amount)
+        public void PrepareDebit(ObjectId transactionId, double amount)
         {
             if (_completedTransactions.Any(x => x== transactionId))
             {
@@ -108,7 +109,7 @@ namespace BankTransferSample.Domain
         /// </summary>
         /// <param name="transactionId"></param>
         /// <param name="amount"></param>
-        public void PrepareCredit(Guid transactionId, double amount)
+        public void PrepareCredit(ObjectId transactionId, double amount)
         {
             if (_completedTransactions.Any(x => x == transactionId))
             {
@@ -126,7 +127,7 @@ namespace BankTransferSample.Domain
         /// <summary>提交转出
         /// </summary>
         /// <param name="transactionId"></param>
-        public void CommitDebit(Guid transactionId)
+        public void CommitDebit(ObjectId transactionId)
         {
             if (_completedTransactions.Any(x => x == transactionId))
             {
@@ -145,7 +146,7 @@ namespace BankTransferSample.Domain
         /// <summary>提交转入
         /// </summary>
         /// <param name="transactionId"></param>
-        public void CommitCredit(Guid transactionId)
+        public void CommitCredit(ObjectId transactionId)
         {
             if (_completedTransactions.Any(x => x == transactionId))
             {
@@ -165,7 +166,7 @@ namespace BankTransferSample.Domain
         /// <summary>终止转出
         /// </summary>
         /// <param name="transactionId"></param>
-        public void AbortDebit(Guid transactionId)
+        public void AbortDebit(ObjectId transactionId)
         {
             if (_completedTransactions.Any(x => x == transactionId))
             {
@@ -181,7 +182,7 @@ namespace BankTransferSample.Domain
         /// <summary>终止转入
         /// </summary>
         /// <param name="transactionId"></param>
-        public void AbortCredit(Guid transactionId)
+        public void AbortCredit(ObjectId transactionId)
         {
             if (_completedTransactions.Any(x => x == transactionId))
             {

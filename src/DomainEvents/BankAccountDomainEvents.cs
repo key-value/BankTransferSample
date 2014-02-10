@@ -1,4 +1,5 @@
 ﻿using System;
+using ECommon.Utilities;
 using ENode.Eventing;
 
 namespace BankTransferSample.DomainEvents
@@ -27,11 +28,11 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class CreditAbortedEvent : SourcingEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public double Amount { get; private set; }
         public DateTime AbortedTime { get; private set; }
 
-        public CreditAbortedEvent(string accountId, Guid transactionId, double amount, DateTime abortedTime)
+        public CreditAbortedEvent(string accountId, ObjectId transactionId, double amount, DateTime abortedTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -46,7 +47,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>交易ID
         /// </summary>
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         /// <summary>转入金额
         /// </summary>
         public double Amount { get; private set; }
@@ -57,7 +58,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public DateTime TransactionTime { get; private set; }
 
-        public CreditCommittedEvent(string accountId, Guid transactionId, double amount, double currentBalance, DateTime transactionTime)
+        public CreditCommittedEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, DateTime transactionTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -71,9 +72,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class CreditPreparationNotExistEvent : DomainEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
 
-        public CreditPreparationNotExistEvent(string accountId, Guid transactionId)
+        public CreditPreparationNotExistEvent(string accountId, ObjectId transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -84,10 +85,10 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class CreditPreparedEvent : SourcingEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public CreditPreparedEvent(string accountId, Guid transactionId, double amount)
+        public CreditPreparedEvent(string accountId, ObjectId transactionId, double amount)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -99,11 +100,11 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DebitAbortedEvent : SourcingEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public double Amount { get; private set; }
         public DateTime AbortedTime { get; private set; }
 
-        public DebitAbortedEvent(string accountId, Guid transactionId, double amount, DateTime abortedTime)
+        public DebitAbortedEvent(string accountId, ObjectId transactionId, double amount, DateTime abortedTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -118,7 +119,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>交易ID
         /// </summary>
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         /// <summary>转出金额
         /// </summary>
         public double Amount { get; private set; }
@@ -129,7 +130,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public DateTime TransactionTime { get; private set; }
 
-        public DebitCommittedEvent(string accountId, Guid transactionId, double amount, double currentBalance, DateTime transactionTime)
+        public DebitCommittedEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, DateTime transactionTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -145,7 +146,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>交易ID
         /// </summary>
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         /// <summary>转出金额
         /// </summary>
         public double Amount { get; private set; }
@@ -156,7 +157,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public double CurrentAvailableBalance { get; private set; }
 
-        public DebitInsufficientBalanceEvent(string accountId, Guid transactionId, double amount, double currentBalance, double currentAvailableBalance)
+        public DebitInsufficientBalanceEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, double currentAvailableBalance)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -170,9 +171,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DebitPreparationNotExistEvent : DomainEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
 
-        public DebitPreparationNotExistEvent(string accountId, Guid transactionId)
+        public DebitPreparationNotExistEvent(string accountId, ObjectId transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -183,10 +184,10 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DebitPreparedEvent : SourcingEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public DebitPreparedEvent(string accountId, Guid transactionId, double amount)
+        public DebitPreparedEvent(string accountId, ObjectId transactionId, double amount)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -221,9 +222,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DuplicatedCreditPreparationEvent : DomainEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
 
-        public DuplicatedCreditPreparationEvent(string accountId, Guid transactionId)
+        public DuplicatedCreditPreparationEvent(string accountId, ObjectId transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -234,9 +235,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DuplicatedDebitPreparationEvent : DomainEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
 
-        public DuplicatedDebitPreparationEvent(string accountId, Guid transactionId)
+        public DuplicatedDebitPreparationEvent(string accountId, ObjectId transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -247,10 +248,10 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class InvalidTransactionOperationEvent : DomainEvent<string>
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public TransactionOperationType OperationType { get; private set; }
 
-        public InvalidTransactionOperationEvent(string accountId, Guid transactionId, TransactionOperationType operationType)
+        public InvalidTransactionOperationEvent(string accountId, ObjectId transactionId, TransactionOperationType operationType)
             : base(accountId)
         {
             TransactionId = transactionId;

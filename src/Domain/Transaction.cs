@@ -1,5 +1,6 @@
 ﻿using System;
 using BankTransferSample.DomainEvents;
+using ECommon.Utilities;
 using ENode.Domain;
 
 namespace BankTransferSample.Domain
@@ -7,7 +8,7 @@ namespace BankTransferSample.Domain
     /// <summary>银行转账交易聚合根，封装一次转账交易的数据一致性
     /// </summary>
     [Serializable]
-    public class Transaction : AggregateRoot<Guid>
+    public class Transaction : AggregateRoot<ObjectId>
     {
         #region Public Properties
 

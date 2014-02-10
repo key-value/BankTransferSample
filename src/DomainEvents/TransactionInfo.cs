@@ -1,4 +1,5 @@
 ﻿using System;
+using ECommon.Utilities;
 
 namespace BankTransferSample.DomainEvents
 {
@@ -9,7 +10,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>转账交易ID
         /// </summary>
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         /// <summary>源账号
         /// </summary>
         public string SourceAccountId { get; private set; }
@@ -20,7 +21,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public double Amount { get; private set; }
 
-        public TransactionInfo(Guid transactionId, string sourceAccountId, string targetAccountId, double amount)
+        public TransactionInfo(ObjectId transactionId, string sourceAccountId, string targetAccountId, double amount)
         {
             TransactionId = transactionId;
             SourceAccountId = sourceAccountId;

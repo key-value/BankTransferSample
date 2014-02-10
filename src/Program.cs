@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using BankTransferSample.Commands;
 using BankTransferSample.DomainEvents;
@@ -10,6 +9,7 @@ using ECommon.Configurations;
 using ECommon.IoC;
 using ECommon.JsonNet;
 using ECommon.Log4Net;
+using ECommon.Utilities;
 using ENode.Commanding;
 using ENode.Configurations;
 using ENode.Eventing;
@@ -31,16 +31,23 @@ namespace BankTransferSample
             var task2 = commandService.Execute(new CreateAccountCommand("00002", "凯锋"));
             Task.WaitAll(task1, task2);
 
+            Console.WriteLine(string.Empty);
+
             //每个账户都存入1000元
-            task1 = commandService.Execute(new DepositCommand("00001", 1000));
-            task2 = commandService.Execute(new DepositCommand("00002", 1000));
-            Task.WaitAll(task1, task2);
+            commandService.Execute(new DepositCommand("00001", 1000)).Wait();
+            commandService.Execute(new DepositCommand("00002", 1000)).Wait();
+
+            Console.WriteLine(string.Empty);
 
             //账户1向账户2转账300元
-            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(Guid.NewGuid(), "00001", "00002", 300D))).Wait();
-            //账户2向账户1转账500元
-            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(Guid.NewGuid(), "00002", "00001", 500D))).Wait();
+            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00001", "00002", 300D))).Wait();
+            Console.WriteLine(string.Empty);
 
+            //账户2向账户1转账500元
+            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00002", "00001", 500D))).Wait();
+            Console.WriteLine(string.Empty);
+
+            Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
         }
 
@@ -85,25 +92,13 @@ namespace BankTransferSample
         IEventHandler<TransactionCompletedEvent>,                //交易已完成
         IEventHandler<TransactionAbortedEvent>                   //交易已终止
     {
-        private static int _accountCreatedCount = 0;
-        private static int _depositedCount = 0;
-        private static int _transactionCompletedCount = 0;
-
         public void Handle(AccountCreatedEvent evnt)
         {
             Console.WriteLine("账号已创建，账号：{0}，所有者：{1}", evnt.AggregateRootId, evnt.Owner);
-            if (Interlocked.Increment(ref _accountCreatedCount) == 2)
-            {
-                Console.WriteLine(string.Empty);
-            }
         }
         public void Handle(DepositedEvent evnt)
         {
             Console.WriteLine("存款已成功，账号：{0}，金额：{1}，当前余额：{2}", evnt.AggregateRootId, evnt.Amount, evnt.CurrentBalance);
-            if (Interlocked.Increment(ref _depositedCount) == 2)
-            {
-                Console.WriteLine(string.Empty);
-            }
         }
         public void Handle(WithdrawnEvent evnt)
         {
@@ -164,17 +159,10 @@ namespace BankTransferSample
         public void Handle(TransactionCompletedEvent evnt)
         {
             Console.WriteLine("交易已完成，交易ID：{0}", evnt.AggregateRootId);
-            Console.WriteLine(string.Empty);
-
-            if (Interlocked.Increment(ref _transactionCompletedCount) == 2)
-            {
-                Console.WriteLine("Press Enter to exit...");
-            }
         }
         public void Handle(TransactionAbortedEvent evnt)
         {
             Console.WriteLine("交易已终止，交易ID：{0}", evnt.AggregateRootId);
-            Console.WriteLine(string.Empty);
         }
     }
 }

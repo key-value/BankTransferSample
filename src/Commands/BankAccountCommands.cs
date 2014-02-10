@@ -1,4 +1,5 @@
 ﻿using System;
+using ECommon.Utilities;
 using ENode.Commanding;
 
 namespace BankTransferSample.Commands
@@ -44,11 +45,11 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class PrepareDebitCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
+        public ObjectId TransactionId { get; set; }
         public double Amount { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
 
-        public PrepareDebitCommand(string accountId, Guid transactionId, double amount) : base(accountId)
+        public PrepareDebitCommand(string accountId, ObjectId transactionId, double amount)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
             Amount = amount;
@@ -59,11 +60,11 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class PrepareCreditCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
+        public ObjectId TransactionId { get; set; }
         public double Amount { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
 
-        public PrepareCreditCommand(string accountId, Guid transactionId, double amount) : base(accountId)
+        public PrepareCreditCommand(string accountId, ObjectId transactionId, double amount)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
             Amount = amount;
@@ -74,10 +75,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class CommitDebitCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
+        public ObjectId TransactionId { get; set; }
 
-        public CommitDebitCommand(string accountId, Guid transactionId) : base(accountId)
+        public CommitDebitCommand(string accountId, ObjectId transactionId)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
         }
@@ -87,10 +88,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class CommitCreditCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
+        public ObjectId TransactionId { get; set; }
 
-        public CommitCreditCommand(string accountId, Guid transactionId) : base(accountId)
+        public CommitCreditCommand(string accountId, ObjectId transactionId)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
         }
@@ -100,10 +101,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class AbortDebitCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
+        public ObjectId TransactionId { get; set; }
 
-        public AbortDebitCommand(string accountId, Guid transactionId) : base(accountId)
+        public AbortDebitCommand(string accountId, ObjectId transactionId)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
         }
@@ -113,10 +114,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class AbortCreditCommand : ProcessCommand<string>
     {
-        public Guid TransactionId { get; set; }
-        public override string ProcessId { get { return TransactionId.ToString(); } }
+        public ObjectId TransactionId { get; set; }
 
-        public AbortCreditCommand(string accountId, Guid transactionId) : base(accountId)
+        public AbortCreditCommand(string accountId, ObjectId transactionId)
+            : base(accountId, transactionId)
         {
             TransactionId = transactionId;
         }

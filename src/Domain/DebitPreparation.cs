@@ -1,4 +1,5 @@
 ﻿using System;
+using ECommon.Utilities;
 
 namespace BankTransferSample.Domain
 {
@@ -7,10 +8,10 @@ namespace BankTransferSample.Domain
     [Serializable]
     public class DebitPreparation
     {
-        public Guid TransactionId { get; private set; }
+        public ObjectId TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public DebitPreparation(Guid transactionId, double amount)
+        public DebitPreparation(ObjectId transactionId, double amount)
         {
             TransactionId = transactionId;
             Amount = amount;
