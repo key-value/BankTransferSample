@@ -78,9 +78,9 @@ namespace BankTransferSample.DomainEvents
             AbortedTime = abortedTime;
         }
 
-        public Guid ProcessId
+        public string ProcessId
         {
-            get { return TransactionInfo.TransactionId; }
+            get { return TransactionInfo.TransactionId.ToString(); }
         }
     }
     /// <summary>交易已提交
@@ -113,9 +113,9 @@ namespace BankTransferSample.DomainEvents
             CompletedTime = completedTime;
         }
 
-        public Guid ProcessId
+        public string ProcessId
         {
-            get { return TransactionInfo.TransactionId; }
+            get { return TransactionInfo.TransactionId.ToString(); }
         }
     }
     /// <summary>交易已创建
