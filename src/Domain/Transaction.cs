@@ -15,6 +15,9 @@ namespace BankTransferSample.Domain
         /// <summary>交易基本信息
         /// </summary>
         public TransactionInfo TransactionInfo { get; private set; }
+        /// <summary>交易开始时间
+        /// </summary>
+        public DateTime StartedTime { get; private set; }
         /// <summary>预转出已确认
         /// </summary>
         public bool DebitPreparationConfirmed { get; private set; }
@@ -40,22 +43,13 @@ namespace BankTransferSample.Domain
         /// <param name="transactionInfo"></param>
         public Transaction(TransactionInfo transactionInfo)
         {
-            RaiseEvent(new TransactionCreatedEvent(transactionInfo));
+            RaiseEvent(new TransactionStartedEvent(transactionInfo, DateTime.Now));
         }
 
         #endregion
 
         #region Public Methods
 
-        /// <summary>开始交易
-        /// </summary>
-        public void Start()
-        {
-            if (Status == TransactionStatus.Created)
-            {
-                RaiseEvent(new TransactionStartedEvent(Id, TransactionInfo, DateTime.Now));
-            }
-        }
         /// <summary>确认预转出
         /// </summary>
         public void ConfirmDebitPreparation()
@@ -134,14 +128,11 @@ namespace BankTransferSample.Domain
 
         #region Handler Methods
 
-        private void Handle(TransactionCreatedEvent evnt)
+        private void Handle(TransactionStartedEvent evnt)
         {
             Id = evnt.AggregateRootId;
             TransactionInfo = evnt.TransactionInfo;
-            Status = TransactionStatus.Created;
-        }
-        private void Handle(TransactionStartedEvent evnt)
-        {
+            StartedTime = evnt.StartedTime;
             Status = TransactionStatus.Started;
         }
         private void Handle(DebitPreparationConfirmedEvent evnt)

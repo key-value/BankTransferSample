@@ -23,13 +23,12 @@ namespace BankTransferSample.EQueueIntegrations
             _typeCodeDict.Add(107, typeof(AbortDebitCommand));
             _typeCodeDict.Add(108, typeof(AbortCreditCommand));
 
-            _typeCodeDict.Add(201, typeof(CreateTransactionCommand));
-            _typeCodeDict.Add(202, typeof(StartTransactionCommand));
-            _typeCodeDict.Add(203, typeof(ConfirmDebitPreparationCommand));
-            _typeCodeDict.Add(204, typeof(ConfirmCreditPreparationCommand));
-            _typeCodeDict.Add(205, typeof(ConfirmDebitCommand));
-            _typeCodeDict.Add(206, typeof(ConfirmCreditCommand));
-            _typeCodeDict.Add(207, typeof(AbortTransactionCommand));
+            _typeCodeDict.Add(201, typeof(StartTransactionCommand));
+            _typeCodeDict.Add(202, typeof(ConfirmDebitPreparationCommand));
+            _typeCodeDict.Add(203, typeof(ConfirmCreditPreparationCommand));
+            _typeCodeDict.Add(204, typeof(ConfirmDebitCommand));
+            _typeCodeDict.Add(205, typeof(ConfirmCreditCommand));
+            _typeCodeDict.Add(206, typeof(AbortTransactionCommand));
         }
 
         public int GetTypeCode(ICommand command)

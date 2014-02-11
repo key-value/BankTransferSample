@@ -10,7 +10,6 @@ namespace BankTransferSample.ProcessManagers
     /// </summary>
     [Component]
     public class TransactionProcessManager :
-        IEventHandler<TransactionCreatedEvent>,                  //交易已创建
         IEventHandler<TransactionStartedEvent>,                  //交易已开始
         IEventHandler<DebitPreparedEvent>,                       //交易已预转出
         IEventHandler<CreditPreparedEvent>,                      //交易已预转入
@@ -27,10 +26,6 @@ namespace BankTransferSample.ProcessManagers
             _commandService = commandService;
         }
 
-        public void Handle(TransactionCreatedEvent evnt)
-        {
-            _commandService.Send(new StartTransactionCommand(evnt.AggregateRootId));
-        }
         public void Handle(TransactionStartedEvent evnt)
         {
             _commandService.Send(new PrepareDebitCommand(evnt.TransactionInfo.SourceAccountId, evnt.AggregateRootId, evnt.TransactionInfo.Amount));

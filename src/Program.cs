@@ -40,11 +40,11 @@ namespace BankTransferSample
             Console.WriteLine(string.Empty);
 
             //账户1向账户2转账300元
-            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00001", "00002", 300D))).Wait();
+            commandService.StartProcess(new StartTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00001", "00002", 300D))).Wait();
             Console.WriteLine(string.Empty);
 
             //账户2向账户1转账500元
-            commandService.StartProcess(new CreateTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00002", "00001", 500D))).Wait();
+            commandService.StartProcess(new StartTransactionCommand(new TransactionInfo(ObjectId.GenerateNewId(), "00002", "00001", 500D))).Wait();
             Console.WriteLine(string.Empty);
 
             Console.WriteLine("Press Enter to exit...");

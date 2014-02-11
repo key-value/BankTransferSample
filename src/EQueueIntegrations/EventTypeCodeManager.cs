@@ -37,8 +37,7 @@ namespace BankTransferSample.EQueueIntegrations
             _typeCodeDict.Add(205, typeof(TransactionAbortedEvent));
             _typeCodeDict.Add(206, typeof(TransactionCommittedEvent));
             _typeCodeDict.Add(207, typeof(TransactionCompletedEvent));
-            _typeCodeDict.Add(208, typeof(TransactionCreatedEvent));
-            _typeCodeDict.Add(209, typeof(TransactionStartedEvent));
+            _typeCodeDict.Add(208, typeof(TransactionStartedEvent));
         }
 
         public int GetTypeCode(IDomainEvent domainEvent)

@@ -9,7 +9,6 @@ namespace BankTransferSample.CommandHandlers
     /// </summary>
     [Component]
     public class TransactionCommandHandlers :
-        ICommandHandler<CreateTransactionCommand>,                //创建交易
         ICommandHandler<StartTransactionCommand>,                 //开始交易
         ICommandHandler<ConfirmDebitPreparationCommand>,          //确认预转出
         ICommandHandler<ConfirmCreditPreparationCommand>,         //确认预转入
@@ -17,13 +16,9 @@ namespace BankTransferSample.CommandHandlers
         ICommandHandler<ConfirmCreditCommand>,                    //确认转入
         ICommandHandler<AbortTransactionCommand>                  //终止交易
     {
-        public void Handle(ICommandContext context, CreateTransactionCommand command)
-        {
-            context.Add(new Transaction(command.TransactionInfo));
-        }
         public void Handle(ICommandContext context, StartTransactionCommand command)
         {
-            context.Get<Transaction>(command.AggregateRootId).Start();
+            context.Add(new Transaction(command.TransactionInfo));
         }
         public void Handle(ICommandContext context, ConfirmDebitPreparationCommand command)
         {

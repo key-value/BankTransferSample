@@ -119,19 +119,6 @@ namespace BankTransferSample.DomainEvents
             get { return TransactionInfo.TransactionId.ToString(); }
         }
     }
-    /// <summary>交易已创建
-    /// </summary>
-    [Serializable]
-    public class TransactionCreatedEvent : SourcingEvent<ObjectId>
-    {
-        public TransactionInfo TransactionInfo { get; private set; }
-
-        public TransactionCreatedEvent(TransactionInfo transactionInfo)
-            : base(transactionInfo.TransactionId)
-        {
-            TransactionInfo = transactionInfo;
-        }
-    }
     /// <summary>交易已开始
     /// </summary>
     [Serializable]
@@ -140,16 +127,11 @@ namespace BankTransferSample.DomainEvents
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime StartedTime { get; private set; }
 
-        public TransactionStartedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime startedTime)
-            : base(transactionId)
+        public TransactionStartedEvent(TransactionInfo transactionInfo, DateTime startedTime)
+            : base(transactionInfo.TransactionId)
         {
             TransactionInfo = transactionInfo;
             StartedTime = startedTime;
         }
     }
-
-
-
-
-
 }
