@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using BankTransferSample.Commands;
+using BankTransferSample.Domain;
 using BankTransferSample.DomainEvents;
 using BankTransferSample.EQueueIntegrations;
 using ECommon.Autofac;
@@ -9,10 +10,17 @@ using ECommon.Configurations;
 using ECommon.IoC;
 using ECommon.JsonNet;
 using ECommon.Log4Net;
+using ECommon.ProtocolBuf;
 using ECommon.Utilities;
 using ENode.Commanding;
 using ENode.Configurations;
+using ENode.Domain;
+using ENode.EQueue;
 using ENode.Eventing;
+using EQueue.Clients.Producers;
+using EQueue.Protocols;
+using EQueue.Utils;
+using ProtoBuf.Meta;
 
 namespace BankTransferSample
 {
@@ -53,6 +61,8 @@ namespace BankTransferSample
 
         static void InitializeENodeFramework()
         {
+            ConfigProtobufMetaData();
+
             var assemblies = new[] { Assembly.GetExecutingAssembly() };
 
             Configuration
@@ -61,6 +71,7 @@ namespace BankTransferSample
                 .RegisterCommonComponents()
                 .UseLog4Net()
                 .UseJsonNet()
+                .UseProtoBufSerializer()
                 .CreateENode()
                 .RegisterENodeComponents()
                 .RegisterBusinessComponents(assemblies)
@@ -68,6 +79,153 @@ namespace BankTransferSample
                 .InitializeENode(assemblies)
                 .StartEQueue()
                 .StartEnode();
+        }
+
+        static void ConfigProtobufMetaData()
+        {
+            var model = RuntimeTypeModel.Default;
+
+            model.Add(typeof(ObjectId), false).UseConstructor = false;
+
+            //Config equeue classes.
+            model.Add(typeof(TypeData<string>), false).Add("TypeCode", "Data").UseConstructor = false;
+            model.Add(typeof(TypeData<byte[]>), false).Add("TypeCode").UseConstructor = false;
+            model[typeof(TypeData<string>)].AddSubType(10, typeof(StringTypeData)).UseConstructor = false;
+            model[typeof(TypeData<byte[]>)].AddSubType(10, typeof(ByteTypeData)).UseConstructor = false;
+
+            model.Add(typeof(ConsumerData), false).Add("ConsumerId", "GroupName", "SubscriptionTopics").UseConstructor = false;
+            model.Add(typeof(Message), false).Add("Topic").UseConstructor = false;
+            model[typeof(Message)].AddSubType(10, typeof(QueueMessage)).UseConstructor = false;
+            model.Add(typeof(QueueMessage), false).Add("MessageOffset", "QueueId", "QueueOffset", "StoredTime").UseConstructor = false;
+            model.Add(typeof(MessageQueue), false).Add("Topic", "QueueId").UseConstructor = false;
+            model.Add(typeof(PullMessageRequest), false).Add("ConsumerGroup", "MessageQueue", "QueueOffset", "PullMessageBatchSize").UseConstructor = false;
+            model.Add(typeof(PullMessageResponse), false).Add("Messages").UseConstructor = false;
+            model.Add(typeof(QueryConsumerRequest), false).Add("GroupName", "Topic").UseConstructor = false;
+            model.Add(typeof(SendMessageRequest), false).Add("QueueId", "Message").UseConstructor = false;
+            model.Add(typeof(SendMessageResponse), false).Add("MessageOffset", "MessageQueue", "QueueOffset").UseConstructor = false;
+            model.Add(typeof(SendResult), false).Add("SendStatus", "ErrorMessage", "MessageQueue", "QueueOffset", "MessageOffset").UseConstructor = false;
+
+            model.Add(typeof(CommandMessage), false).Add("CommandData", "FailedCommandMessageTopic", "DomainEventHandledMessageTopic").UseConstructor = false;
+            model.Add(typeof(FailedCommandMessage), false).Add("CommandId", "AggregateRootId", "ProcessId", "ErrorMessage").UseConstructor = false;
+            model.Add(typeof(DomainEventHandledMessage), false).Add("CommandId", "AggregateRootId", "IsProcessCompletedEvent", "ProcessId").UseConstructor = false;
+            model.Add(typeof(EventMessage), false).Add("CommandId", "AggregateRootId", "AggregateRootName", "Version", "Timestamp", "Events", "ContextItems").UseConstructor = false;
+
+            //Config enode base classes.
+            model.Add(typeof(AggregateRoot<ObjectId>), false).Add("Id", "_version").UseConstructor = false;
+            model.Add(typeof(AggregateRoot<string>), false).Add("Id", "_version").UseConstructor = false;
+
+            model.Add(typeof(Command<string>), false).Add("Id", "RetryCount", "AggregateRootId").UseConstructor = false;
+            model.Add(typeof(Command<ObjectId>), false).Add("Id", "RetryCount", "AggregateRootId").UseConstructor = false;
+            model.Add(typeof(ProcessCommand<ObjectId>), false).Add("_processId").UseConstructor = false;
+            model.Add(typeof(ProcessCommand<string>), false).Add("_processId").UseConstructor = false;
+
+            model.Add(typeof(DomainEvent<ObjectId>), false).Add("Id", "AggregateRootId").UseConstructor = false;
+            model.Add(typeof(DomainEvent<string>), false).Add("Id", "AggregateRootId").UseConstructor = false;
+            model.Add(typeof(SourcingEvent<ObjectId>), false).UseConstructor = false;
+            model.Add(typeof(SourcingEvent<string>), false).UseConstructor = false;
+
+            model[typeof(Command<ObjectId>)].AddSubType(10, typeof(ProcessCommand<ObjectId>)).UseConstructor = false;
+            model[typeof(Command<string>)].AddSubType(10, typeof(ProcessCommand<string>)).UseConstructor = false;
+            model[typeof(DomainEvent<ObjectId>)].AddSubType(10, typeof(SourcingEvent<ObjectId>)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(10, typeof(SourcingEvent<string>)).UseConstructor = false;
+
+            //Config project related classes.
+            model[typeof(AggregateRoot<ObjectId>)].AddSubType(100, typeof(Transaction)).UseConstructor = false;
+            model[typeof(AggregateRoot<string>)].AddSubType(100, typeof(BankAccount)).UseConstructor = false;
+
+            model[typeof(Command<string>)].AddSubType(100, typeof(CreateAccountCommand)).UseConstructor = false;
+            model[typeof(Command<string>)].AddSubType(101, typeof(DepositCommand)).UseConstructor = false;
+            model[typeof(Command<string>)].AddSubType(102, typeof(WithdrawCommand)).UseConstructor = false;
+
+            model[typeof(ProcessCommand<string>)].AddSubType(100, typeof(PrepareDebitCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<string>)].AddSubType(101, typeof(PrepareCreditCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<string>)].AddSubType(102, typeof(CommitDebitCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<string>)].AddSubType(103, typeof(CommitCreditCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<string>)].AddSubType(104, typeof(AbortDebitCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<string>)].AddSubType(105, typeof(AbortCreditCommand)).UseConstructor = false;
+
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(100, typeof(StartTransactionCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(101, typeof(ConfirmDebitPreparationCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(102, typeof(ConfirmCreditPreparationCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(103, typeof(ConfirmDebitCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(104, typeof(ConfirmCreditCommand)).UseConstructor = false;
+            model[typeof(ProcessCommand<ObjectId>)].AddSubType(105, typeof(AbortTransactionCommand)).UseConstructor = false;
+
+            model[typeof(DomainEvent<string>)].AddSubType(100, typeof(CreditPreparationNotExistEvent)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(101, typeof(DebitInsufficientBalanceEvent)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(102, typeof(DebitPreparationNotExistEvent)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(103, typeof(DuplicatedCreditPreparationEvent)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(104, typeof(DuplicatedDebitPreparationEvent)).UseConstructor = false;
+            model[typeof(DomainEvent<string>)].AddSubType(105, typeof(WithdrawInsufficientBalanceEvent)).UseConstructor = false;
+
+            model[typeof(SourcingEvent<string>)].AddSubType(100, typeof(AccountCreatedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(101, typeof(CreditAbortedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(102, typeof(CreditCommittedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(103, typeof(CreditPreparedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(104, typeof(DebitAbortedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(105, typeof(DebitCommittedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(106, typeof(DebitPreparedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(107, typeof(DepositedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<string>)].AddSubType(108, typeof(WithdrawnEvent)).UseConstructor = false;
+
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(100, typeof(CreditConfirmedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(101, typeof(CreditPreparationConfirmedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(102, typeof(DebitConfirmedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(103, typeof(DebitPreparationConfirmedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(104, typeof(TransactionAbortedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(105, typeof(TransactionCommittedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(106, typeof(TransactionCompletedEvent)).UseConstructor = false;
+            model[typeof(SourcingEvent<ObjectId>)].AddSubType(107, typeof(TransactionStartedEvent)).UseConstructor = false;
+
+            model.Add(typeof(BankAccount), false).Add("_debitPreparations", "_creditPreparations", "_completedTransactions", "Owner", "Balance").UseConstructor = false;
+            model.Add(typeof(CreditPreparation), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(DebitPreparation), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(Transaction), false).Add("TransactionInfo", "StartedTime", "DebitPreparationConfirmed", "CreditPreparationConfirmed", "DebitConfirmed", "CreditConfirmed", "Status").UseConstructor = false;
+            model.Add(typeof(TransactionInfo), false).Add("TransactionId", "SourceAccountId", "TargetAccountId", "Amount").UseConstructor = false;
+
+            model.Add(typeof(CreateAccountCommand), false).Add("Owner").UseConstructor = false;
+            model.Add(typeof(DepositCommand), false).Add("Amount").UseConstructor = false;
+            model.Add(typeof(WithdrawCommand), false).Add("Amount").UseConstructor = false;
+            model.Add(typeof(PrepareDebitCommand), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(PrepareCreditCommand), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(CommitDebitCommand), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(CommitCreditCommand), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(AbortDebitCommand), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(AbortCreditCommand), false).Add("TransactionId").UseConstructor = false;
+
+            model.Add(typeof(StartTransactionCommand), false).Add("TransactionInfo").UseConstructor = false;
+            model.Add(typeof(ConfirmDebitPreparationCommand), false).UseConstructor = false;
+            model.Add(typeof(ConfirmCreditPreparationCommand), false).UseConstructor = false;
+            model.Add(typeof(ConfirmDebitCommand), false).UseConstructor = false;
+            model.Add(typeof(ConfirmCreditCommand), false).UseConstructor = false;
+            model.Add(typeof(AbortTransactionCommand), false).UseConstructor = false;
+
+            model.Add(typeof(AccountCreatedEvent), false).Add("Owner", "CreatedTime").UseConstructor = false;
+            model.Add(typeof(CreditAbortedEvent), false).Add("TransactionId", "Amount", "AbortedTime").UseConstructor = false;
+            model.Add(typeof(CreditCommittedEvent), false).Add("TransactionId", "Amount", "CurrentBalance", "TransactionTime").UseConstructor = false;
+            model.Add(typeof(CreditPreparationNotExistEvent), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(CreditPreparedEvent), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(DebitAbortedEvent), false).Add("TransactionId", "Amount", "AbortedTime").UseConstructor = false;
+            model.Add(typeof(DebitCommittedEvent), false).Add("TransactionId", "Amount", "CurrentBalance", "TransactionTime").UseConstructor = false;
+            model.Add(typeof(DebitInsufficientBalanceEvent), false).Add("TransactionId", "Amount", "CurrentBalance", "CurrentAvailableBalance").UseConstructor = false;
+            model.Add(typeof(DebitPreparationNotExistEvent), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(DebitPreparedEvent), false).Add("TransactionId", "Amount").UseConstructor = false;
+            model.Add(typeof(DepositedEvent), false).Add("Amount", "CurrentBalance", "TransactionTime").UseConstructor = false;
+            model.Add(typeof(DuplicatedCreditPreparationEvent), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(DuplicatedDebitPreparationEvent), false).Add("TransactionId").UseConstructor = false;
+            model.Add(typeof(InvalidTransactionOperationEvent), false).Add("TransactionId", "OperationType").UseConstructor = false;
+            model.Add(typeof(WithdrawInsufficientBalanceEvent), false).Add("Amount", "CurrentBalance", "CurrentAvailableBalance").UseConstructor = false;
+            model.Add(typeof(WithdrawnEvent), false).Add("Amount", "CurrentBalance", "TransactionTime").UseConstructor = false;
+
+            model.Add(typeof(CreditPreparationConfirmedEvent), false).Add("TransactionInfo", "ConfirmedTime").UseConstructor = false;
+            model.Add(typeof(DebitPreparationConfirmedEvent), false).Add("TransactionInfo", "ConfirmedTime").UseConstructor = false;
+            model.Add(typeof(CreditConfirmedEvent), false).Add("TransactionInfo", "ConfirmedTime").UseConstructor = false;
+            model.Add(typeof(DebitConfirmedEvent), false).Add("TransactionInfo", "ConfirmedTime").UseConstructor = false;
+
+            model.Add(typeof(TransactionStartedEvent), false).Add("TransactionInfo", "StartedTime").UseConstructor = false;
+            model.Add(typeof(TransactionCommittedEvent), false).Add("TransactionInfo", "CommittedTime").UseConstructor = false;
+            model.Add(typeof(TransactionCompletedEvent), false).Add("TransactionInfo", "CompletedTime").UseConstructor = false;
+            model.Add(typeof(TransactionAbortedEvent), false).Add("TransactionInfo", "AbortedTime").UseConstructor = false;
         }
     }
 
