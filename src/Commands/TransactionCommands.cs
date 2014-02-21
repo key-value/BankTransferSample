@@ -8,7 +8,7 @@ namespace BankTransferSample.Commands
     /// <summary>发起一笔转账交易
     /// </summary>
     [Serializable]
-    public class StartTransactionCommand : ProcessCommand<ObjectId>, ICreatingAggregateCommand
+    public class StartTransactionCommand : ProcessCommand<string>, ICreatingAggregateCommand
     {
         public TransactionInfo TransactionInfo { get; private set; }
 
@@ -21,9 +21,9 @@ namespace BankTransferSample.Commands
     /// <summary>确认预转出
     /// </summary>
     [Serializable]
-    public class ConfirmDebitPreparationCommand : ProcessCommand<ObjectId>
+    public class ConfirmDebitPreparationCommand : ProcessCommand<string>
     {
-        public ConfirmDebitPreparationCommand(ObjectId transactionId)
+        public ConfirmDebitPreparationCommand(string transactionId)
             : base(transactionId)
         {
         }
@@ -31,9 +31,9 @@ namespace BankTransferSample.Commands
     /// <summary>确认预转入
     /// </summary>
     [Serializable]
-    public class ConfirmCreditPreparationCommand : ProcessCommand<ObjectId>
+    public class ConfirmCreditPreparationCommand : ProcessCommand<string>
     {
-        public ConfirmCreditPreparationCommand(ObjectId transactionId)
+        public ConfirmCreditPreparationCommand(string transactionId)
             : base(transactionId)
         {
         }
@@ -41,9 +41,9 @@ namespace BankTransferSample.Commands
     /// <summary>确认转出
     /// </summary>
     [Serializable]
-    public class ConfirmDebitCommand : ProcessCommand<ObjectId>
+    public class ConfirmDebitCommand : ProcessCommand<string>
     {
-        public ConfirmDebitCommand(ObjectId transactionId)
+        public ConfirmDebitCommand(string transactionId)
             : base(transactionId)
         {
         }
@@ -51,9 +51,9 @@ namespace BankTransferSample.Commands
     /// <summary>确认转入
     /// </summary>
     [Serializable]
-    public class ConfirmCreditCommand : ProcessCommand<ObjectId>
+    public class ConfirmCreditCommand : ProcessCommand<string>
     {
-        public ConfirmCreditCommand(ObjectId transactionId)
+        public ConfirmCreditCommand(string transactionId)
             : base(transactionId)
         {
         }
@@ -61,9 +61,9 @@ namespace BankTransferSample.Commands
     /// <summary>终止转账交易
     /// </summary>
     [Serializable]
-    public class AbortTransactionCommand : ProcessCommand<ObjectId>
+    public class AbortTransactionCommand : ProcessCommand<string>
     {
-        public AbortTransactionCommand(ObjectId transactionId)
+        public AbortTransactionCommand(string transactionId)
             : base(transactionId)
         {
         }

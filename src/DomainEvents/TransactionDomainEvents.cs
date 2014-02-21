@@ -7,12 +7,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转入已确认
     /// </summary>
     [Serializable]
-    public class CreditConfirmedEvent : SourcingEvent<ObjectId>
+    public class CreditConfirmedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime ConfirmedTime { get; private set; }
 
-        public CreditConfirmedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
+        public CreditConfirmedEvent(string transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -22,12 +22,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易预转入已确认
     /// </summary>
     [Serializable]
-    public class CreditPreparationConfirmedEvent : SourcingEvent<ObjectId>
+    public class CreditPreparationConfirmedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime ConfirmedTime { get; private set; }
 
-        public CreditPreparationConfirmedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
+        public CreditPreparationConfirmedEvent(string transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -37,12 +37,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转出已确认
     /// </summary>
     [Serializable]
-    public class DebitConfirmedEvent : SourcingEvent<ObjectId>
+    public class DebitConfirmedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime ConfirmedTime { get; private set; }
 
-        public DebitConfirmedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
+        public DebitConfirmedEvent(string transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -52,12 +52,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易预转出已确认
     /// </summary>
     [Serializable]
-    public class DebitPreparationConfirmedEvent : SourcingEvent<ObjectId>
+    public class DebitPreparationConfirmedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime ConfirmedTime { get; private set; }
 
-        public DebitPreparationConfirmedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
+        public DebitPreparationConfirmedEvent(string transactionId, TransactionInfo transactionInfo, DateTime confirmedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -67,12 +67,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易已终止
     /// </summary>
     [Serializable]
-    public class TransactionAbortedEvent : SourcingEvent<ObjectId>, IProcessCompletedEvent
+    public class TransactionAbortedEvent : DomainEvent<string>, IProcessCompletedEvent
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime AbortedTime { get; private set; }
 
-        public TransactionAbortedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime abortedTime)
+        public TransactionAbortedEvent(string transactionId, TransactionInfo transactionInfo, DateTime abortedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -87,12 +87,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易已提交
     /// </summary>
     [Serializable]
-    public class TransactionCommittedEvent : SourcingEvent<ObjectId>
+    public class TransactionCommittedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime CommittedTime { get; private set; }
 
-        public TransactionCommittedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime committedTime)
+        public TransactionCommittedEvent(string transactionId, TransactionInfo transactionInfo, DateTime committedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -102,12 +102,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易已完成
     /// </summary>
     [Serializable]
-    public class TransactionCompletedEvent : SourcingEvent<ObjectId>, IProcessCompletedEvent
+    public class TransactionCompletedEvent : DomainEvent<string>, IProcessCompletedEvent
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime CompletedTime { get; private set; }
 
-        public TransactionCompletedEvent(ObjectId transactionId, TransactionInfo transactionInfo, DateTime completedTime)
+        public TransactionCompletedEvent(string transactionId, TransactionInfo transactionInfo, DateTime completedTime)
             : base(transactionId)
         {
             TransactionInfo = transactionInfo;
@@ -122,7 +122,7 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易已开始
     /// </summary>
     [Serializable]
-    public class TransactionStartedEvent : SourcingEvent<ObjectId>
+    public class TransactionStartedEvent : DomainEvent<string>
     {
         public TransactionInfo TransactionInfo { get; private set; }
         public DateTime StartedTime { get; private set; }

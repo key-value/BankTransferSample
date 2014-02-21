@@ -10,7 +10,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>转账交易ID
         /// </summary>
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         /// <summary>源账号
         /// </summary>
         public string SourceAccountId { get; private set; }
@@ -21,7 +21,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public double Amount { get; private set; }
 
-        public TransactionInfo(ObjectId transactionId, string sourceAccountId, string targetAccountId, double amount)
+        public TransactionInfo(string transactionId, string sourceAccountId, string targetAccountId, double amount)
         {
             TransactionId = transactionId;
             SourceAccountId = sourceAccountId;

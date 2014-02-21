@@ -8,10 +8,10 @@ namespace BankTransferSample.Domain
     [Serializable]
     public class CreditPreparation
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public CreditPreparation(ObjectId transactionId, double amount)
+        public CreditPreparation(string transactionId, double amount)
         {
             TransactionId = transactionId;
             Amount = amount;

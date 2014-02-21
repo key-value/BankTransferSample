@@ -8,7 +8,7 @@ namespace BankTransferSample.Domain
     /// <summary>银行转账交易聚合根，封装一次转账交易的数据一致性
     /// </summary>
     [Serializable]
-    public class Transaction : AggregateRoot<ObjectId>
+    public class Transaction : AggregateRoot<string>
     {
         #region Public Properties
 
@@ -41,7 +41,7 @@ namespace BankTransferSample.Domain
         /// <summary>构造函数
         /// </summary>
         /// <param name="transactionInfo"></param>
-        public Transaction(TransactionInfo transactionInfo)
+        public Transaction(TransactionInfo transactionInfo) : base(transactionInfo.TransactionId)
         {
             RaiseEvent(new TransactionStartedEvent(transactionInfo, DateTime.Now));
         }

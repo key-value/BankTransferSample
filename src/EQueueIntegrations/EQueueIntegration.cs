@@ -51,8 +51,8 @@ namespace BankTransferSample.EQueueIntegrations
 
             _broker = new BrokerController().Initialize();
 
-            var failedCommandMessageConsumer = new Consumer(consumerSetting, "FailedCommandMessageConsumer", "FailedCommandMessageConsumerGroup_" + ObjectId.GenerateNewId().ToString());
-            var domainEventHandledMessageConsumer = new Consumer(consumerSetting, "DomainEventHandledMessageConsumer", "DomainEventHandledMessageConsumerGroup_" + ObjectId.GenerateNewId().ToString());
+            var failedCommandMessageConsumer = new Consumer(consumerSetting, "FailedCommandMessageConsumer", "FailedCommandMessageConsumerGroup_" + ObjectId.GenerateNewStringId());
+            var domainEventHandledMessageConsumer = new Consumer(consumerSetting, "DomainEventHandledMessageConsumer", "DomainEventHandledMessageConsumerGroup_" + ObjectId.GenerateNewStringId());
             _commandResultProcessor = new CommandResultProcessor(failedCommandMessageConsumer, domainEventHandledMessageConsumer);
 
             _commandService = new CommandService(_commandResultProcessor);

@@ -45,10 +45,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class PrepareDebitCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
         public double Amount { get; set; }
 
-        public PrepareDebitCommand(string accountId, ObjectId transactionId, double amount)
+        public PrepareDebitCommand(string accountId, string transactionId, double amount)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -60,10 +60,10 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class PrepareCreditCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
         public double Amount { get; set; }
 
-        public PrepareCreditCommand(string accountId, ObjectId transactionId, double amount)
+        public PrepareCreditCommand(string accountId, string transactionId, double amount)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -75,9 +75,9 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class CommitDebitCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
-        public CommitDebitCommand(string accountId, ObjectId transactionId)
+        public CommitDebitCommand(string accountId, string transactionId)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -88,9 +88,9 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class CommitCreditCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
-        public CommitCreditCommand(string accountId, ObjectId transactionId)
+        public CommitCreditCommand(string accountId, string transactionId)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -101,9 +101,9 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class AbortDebitCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
-        public AbortDebitCommand(string accountId, ObjectId transactionId)
+        public AbortDebitCommand(string accountId, string transactionId)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -114,9 +114,9 @@ namespace BankTransferSample.Commands
     [Serializable]
     public class AbortCreditCommand : ProcessCommand<string>
     {
-        public ObjectId TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
-        public AbortCreditCommand(string accountId, ObjectId transactionId)
+        public AbortCreditCommand(string accountId, string transactionId)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;

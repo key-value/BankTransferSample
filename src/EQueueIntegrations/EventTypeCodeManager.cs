@@ -26,9 +26,8 @@ namespace BankTransferSample.EQueueIntegrations
             _typeCodeDict.Add(110, typeof(DepositedEvent));
             _typeCodeDict.Add(111, typeof(DuplicatedCreditPreparationEvent));
             _typeCodeDict.Add(112, typeof(DuplicatedDebitPreparationEvent));
-            _typeCodeDict.Add(113, typeof(InvalidTransactionOperationEvent));
-            _typeCodeDict.Add(114, typeof(WithdrawInsufficientBalanceEvent));
-            _typeCodeDict.Add(115, typeof(WithdrawnEvent));
+            _typeCodeDict.Add(113, typeof(WithdrawInsufficientBalanceEvent));
+            _typeCodeDict.Add(114, typeof(WithdrawnEvent));
 
             _typeCodeDict.Add(201, typeof(CreditConfirmedEvent));
             _typeCodeDict.Add(202, typeof(CreditPreparationConfirmedEvent));

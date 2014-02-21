@@ -16,7 +16,6 @@ namespace BankTransferSample.Domain
 
         private IList<DebitPreparation> _debitPreparations;
         private IList<CreditPreparation> _creditPreparations;
-        private IList<ObjectId> _completedTransactions;
 
         #endregion
 
@@ -37,23 +36,9 @@ namespace BankTransferSample.Domain
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="owner"></param>
-        public BankAccount(string accountId, string owner)
+        public BankAccount(string accountId, string owner) : base(accountId)
         {
             RaiseEvent(new AccountCreatedEvent(accountId, owner, DateTime.Now));
-        }
-
-        #endregion
-
-        #region Protected Methods
-
-        /// <summary>初始化账号聚合根
-        /// </summary>
-        protected override void Initialize()
-        {
-            base.Initialize();
-            _debitPreparations = new List<DebitPreparation>();
-            _creditPreparations = new List<CreditPreparation>();
-            _completedTransactions = new List<ObjectId>();
         }
 
         #endregion
@@ -84,12 +69,11 @@ namespace BankTransferSample.Domain
         /// </summary>
         /// <param name="transactionId"></param>
         /// <param name="amount"></param>
-        public void PrepareDebit(ObjectId transactionId, double amount)
+        public void PrepareDebit(string transactionId, double amount)
         {
-            if (_completedTransactions.Any(x => x== transactionId))
+            if (_debitPreparations == null)
             {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.PrepareDebit));
-                return;
+                _debitPreparations = new List<DebitPreparation>();
             }
             if (_debitPreparations.Any(x => x.TransactionId == transactionId))
             {
@@ -109,12 +93,11 @@ namespace BankTransferSample.Domain
         /// </summary>
         /// <param name="transactionId"></param>
         /// <param name="amount"></param>
-        public void PrepareCredit(ObjectId transactionId, double amount)
+        public void PrepareCredit(string transactionId, double amount)
         {
-            if (_completedTransactions.Any(x => x == transactionId))
+            if (_creditPreparations == null)
             {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.PrepareCredit));
-                return;
+                _creditPreparations = new List<CreditPreparation>();
             }
             if (_creditPreparations.Any(x => x.TransactionId == transactionId))
             {
@@ -127,13 +110,8 @@ namespace BankTransferSample.Domain
         /// <summary>提交转出
         /// </summary>
         /// <param name="transactionId"></param>
-        public void CommitDebit(ObjectId transactionId)
+        public void CommitDebit(string transactionId)
         {
-            if (_completedTransactions.Any(x => x == transactionId))
-            {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.CommitDebit));
-                return;
-            }
             var preparation = _debitPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
             if (preparation == null)
             {
@@ -146,14 +124,8 @@ namespace BankTransferSample.Domain
         /// <summary>提交转入
         /// </summary>
         /// <param name="transactionId"></param>
-        public void CommitCredit(ObjectId transactionId)
+        public void CommitCredit(string transactionId)
         {
-            if (_completedTransactions.Any(x => x == transactionId))
-            {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.CommitCredit));
-                return;
-            }
-
             var preparation = _creditPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
             if (preparation == null)
             {
@@ -166,13 +138,8 @@ namespace BankTransferSample.Domain
         /// <summary>终止转出
         /// </summary>
         /// <param name="transactionId"></param>
-        public void AbortDebit(ObjectId transactionId)
+        public void AbortDebit(string transactionId)
         {
-            if (_completedTransactions.Any(x => x == transactionId))
-            {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.AbortDebit));
-                return;
-            }
             var preparation = _debitPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
             if (preparation != null)
             {
@@ -182,13 +149,8 @@ namespace BankTransferSample.Domain
         /// <summary>终止转入
         /// </summary>
         /// <param name="transactionId"></param>
-        public void AbortCredit(ObjectId transactionId)
+        public void AbortCredit(string transactionId)
         {
-            if (_completedTransactions.Any(x => x == transactionId))
-            {
-                RaiseEvent(new InvalidTransactionOperationEvent(Id, transactionId, TransactionOperationType.AbortCredit));
-                return;
-            }
             var preparation = _creditPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
             if (preparation != null)
             {
@@ -225,6 +187,8 @@ namespace BankTransferSample.Domain
 
         private void Handle(AccountCreatedEvent evnt)
         {
+            _debitPreparations = new List<DebitPreparation>();
+            _creditPreparations = new List<CreditPreparation>();
             Id = evnt.AggregateRootId;
             Owner = evnt.Owner;
         }
@@ -248,13 +212,11 @@ namespace BankTransferSample.Domain
         {
             Balance = evnt.CurrentBalance;
             _debitPreparations.Remove(_debitPreparations.Single(x => x.TransactionId == evnt.TransactionId));
-            _completedTransactions.Add(evnt.TransactionId);
         }
         private void Handle(CreditCommittedEvent evnt)
         {
             Balance = evnt.CurrentBalance;
             _creditPreparations.Remove(_creditPreparations.Single(x => x.TransactionId == evnt.TransactionId));
-            _completedTransactions.Add(evnt.TransactionId);
         }
         private void Handle(DebitAbortedEvent evnt)
         {

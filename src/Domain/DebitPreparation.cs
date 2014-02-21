@@ -8,10 +8,10 @@ namespace BankTransferSample.Domain
     [Serializable]
     public class DebitPreparation
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public DebitPreparation(ObjectId transactionId, double amount)
+        public DebitPreparation(string transactionId, double amount)
         {
             TransactionId = transactionId;
             Amount = amount;

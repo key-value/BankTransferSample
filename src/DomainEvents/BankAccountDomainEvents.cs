@@ -7,7 +7,7 @@ namespace BankTransferSample.DomainEvents
     /// <summary>已开户
     /// </summary>
     [Serializable]
-    public class AccountCreatedEvent : SourcingEvent<string>
+    public class AccountCreatedEvent : DomainEvent<string>
     {
         /// <summary>账号拥有者
         /// </summary>
@@ -26,13 +26,13 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转入已终止
     /// </summary>
     [Serializable]
-    public class CreditAbortedEvent : SourcingEvent<string>
+    public class CreditAbortedEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
         public DateTime AbortedTime { get; private set; }
 
-        public CreditAbortedEvent(string accountId, ObjectId transactionId, double amount, DateTime abortedTime)
+        public CreditAbortedEvent(string accountId, string transactionId, double amount, DateTime abortedTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -43,11 +43,11 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转入已提交
     /// </summary>
     [Serializable]
-    public class CreditCommittedEvent : SourcingEvent<string>
+    public class CreditCommittedEvent : DomainEvent<string>
     {
         /// <summary>交易ID
         /// </summary>
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         /// <summary>转入金额
         /// </summary>
         public double Amount { get; private set; }
@@ -58,7 +58,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public DateTime TransactionTime { get; private set; }
 
-        public CreditCommittedEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, DateTime transactionTime)
+        public CreditCommittedEvent(string accountId, string transactionId, double amount, double currentBalance, DateTime transactionTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -72,9 +72,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class CreditPreparationNotExistEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
 
-        public CreditPreparationNotExistEvent(string accountId, ObjectId transactionId)
+        public CreditPreparationNotExistEvent(string accountId, string transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -83,12 +83,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易预转入成功
     /// </summary>
     [Serializable]
-    public class CreditPreparedEvent : SourcingEvent<string>
+    public class CreditPreparedEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public CreditPreparedEvent(string accountId, ObjectId transactionId, double amount)
+        public CreditPreparedEvent(string accountId, string transactionId, double amount)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -98,13 +98,13 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转出已终止
     /// </summary>
     [Serializable]
-    public class DebitAbortedEvent : SourcingEvent<string>
+    public class DebitAbortedEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
         public DateTime AbortedTime { get; private set; }
 
-        public DebitAbortedEvent(string accountId, ObjectId transactionId, double amount, DateTime abortedTime)
+        public DebitAbortedEvent(string accountId, string transactionId, double amount, DateTime abortedTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -115,11 +115,11 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易转出已提交
     /// </summary>
     [Serializable]
-    public class DebitCommittedEvent : SourcingEvent<string>
+    public class DebitCommittedEvent : DomainEvent<string>
     {
         /// <summary>交易ID
         /// </summary>
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         /// <summary>转出金额
         /// </summary>
         public double Amount { get; private set; }
@@ -130,7 +130,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public DateTime TransactionTime { get; private set; }
 
-        public DebitCommittedEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, DateTime transactionTime)
+        public DebitCommittedEvent(string accountId, string transactionId, double amount, double currentBalance, DateTime transactionTime)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -146,7 +146,7 @@ namespace BankTransferSample.DomainEvents
     {
         /// <summary>交易ID
         /// </summary>
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         /// <summary>转出金额
         /// </summary>
         public double Amount { get; private set; }
@@ -157,7 +157,7 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public double CurrentAvailableBalance { get; private set; }
 
-        public DebitInsufficientBalanceEvent(string accountId, ObjectId transactionId, double amount, double currentBalance, double currentAvailableBalance)
+        public DebitInsufficientBalanceEvent(string accountId, string transactionId, double amount, double currentBalance, double currentAvailableBalance)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -171,9 +171,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DebitPreparationNotExistEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
 
-        public DebitPreparationNotExistEvent(string accountId, ObjectId transactionId)
+        public DebitPreparationNotExistEvent(string accountId, string transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -182,12 +182,12 @@ namespace BankTransferSample.DomainEvents
     /// <summary>交易预转出成功
     /// </summary>
     [Serializable]
-    public class DebitPreparedEvent : SourcingEvent<string>
+    public class DebitPreparedEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
         public double Amount { get; private set; }
 
-        public DebitPreparedEvent(string accountId, ObjectId transactionId, double amount)
+        public DebitPreparedEvent(string accountId, string transactionId, double amount)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -197,7 +197,7 @@ namespace BankTransferSample.DomainEvents
     /// <summary>已存款
     /// </summary>
     [Serializable]
-    public class DepositedEvent : SourcingEvent<string>
+    public class DepositedEvent : DomainEvent<string>
     {
         /// <summary>存款金额
         /// </summary>
@@ -222,9 +222,9 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DuplicatedCreditPreparationEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
 
-        public DuplicatedCreditPreparationEvent(string accountId, ObjectId transactionId)
+        public DuplicatedCreditPreparationEvent(string accountId, string transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
@@ -235,27 +235,12 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DuplicatedDebitPreparationEvent : DomainEvent<string>
     {
-        public ObjectId TransactionId { get; private set; }
+        public string TransactionId { get; private set; }
 
-        public DuplicatedDebitPreparationEvent(string accountId, ObjectId transactionId)
+        public DuplicatedDebitPreparationEvent(string accountId, string transactionId)
             : base(accountId)
         {
             TransactionId = transactionId;
-        }
-    }
-    /// <summary>在转账交易已完成后进行了无效的操作
-    /// </summary>
-    [Serializable]
-    public class InvalidTransactionOperationEvent : DomainEvent<string>
-    {
-        public ObjectId TransactionId { get; private set; }
-        public TransactionOperationType OperationType { get; private set; }
-
-        public InvalidTransactionOperationEvent(string accountId, ObjectId transactionId, TransactionOperationType operationType)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-            OperationType = operationType;
         }
     }
     /// <summary>余额不足不允许取款操作
@@ -284,7 +269,7 @@ namespace BankTransferSample.DomainEvents
     /// <summary>已取款
     /// </summary>
     [Serializable]
-    public class WithdrawnEvent : SourcingEvent<string>
+    public class WithdrawnEvent : DomainEvent<string>
     {
         /// <summary>取款金额
         /// </summary>
