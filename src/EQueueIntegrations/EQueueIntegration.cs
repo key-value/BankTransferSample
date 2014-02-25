@@ -22,7 +22,7 @@ namespace BankTransferSample.EQueueIntegrations
         private static EventPublisher _eventPublisher;
         private static EventConsumer _eventConsumer;
         private static DomainEventHandledMessageSender _domainEventHandledMessageSender;
-        private static FailedCommandMessageSender _failedCommandMessageSender;
+        private static CommandExecutedMessageSender _commandExecutedMessageSender;
         private static CommandResultProcessor _commandResultProcessor;
 
         public static ENodeConfiguration UseEQueue(this ENodeConfiguration enodeConfiguration)
@@ -51,24 +51,24 @@ namespace BankTransferSample.EQueueIntegrations
 
             _broker = new BrokerController().Initialize();
 
-            var failedCommandMessageConsumer = new Consumer(consumerSetting, "FailedCommandMessageConsumer", "FailedCommandMessageConsumerGroup_" + ObjectId.GenerateNewStringId());
+            var commandExecutedMessageConsumer = new Consumer(consumerSetting, "CommandExecutedMessageConsumer", "CommandExecutedMessageConsumerGroup_" + ObjectId.GenerateNewStringId());
             var domainEventHandledMessageConsumer = new Consumer(consumerSetting, "DomainEventHandledMessageConsumer", "DomainEventHandledMessageConsumerGroup_" + ObjectId.GenerateNewStringId());
-            _commandResultProcessor = new CommandResultProcessor(failedCommandMessageConsumer, domainEventHandledMessageConsumer);
+            _commandResultProcessor = new CommandResultProcessor(commandExecutedMessageConsumer, domainEventHandledMessageConsumer);
 
             _commandService = new CommandService(_commandResultProcessor);
-            _failedCommandMessageSender = new FailedCommandMessageSender();
+            _commandExecutedMessageSender = new CommandExecutedMessageSender();
             _domainEventHandledMessageSender = new DomainEventHandledMessageSender();
             _eventPublisher = new EventPublisher();
 
             configuration.SetDefault<ICommandService, CommandService>(_commandService);
             configuration.SetDefault<IEventPublisher, EventPublisher>(_eventPublisher);
 
-            _commandConsumer = new CommandConsumer(consumerSetting, _failedCommandMessageSender);
+            _commandConsumer = new CommandConsumer(consumerSetting, _commandExecutedMessageSender);
             _eventConsumer = new EventConsumer(eventConsumerSetting, _domainEventHandledMessageSender);
 
             _commandConsumer.Subscribe("BankTransferCommandTopic");
             _eventConsumer.Subscribe("BankTransferEventTopic");
-            _commandResultProcessor.SetFailedCommandMessageTopic("FailedCommandMessageTopic");
+            _commandResultProcessor.SetExecutedCommandMessageTopic("ExecutedCommandMessageTopic");
             _commandResultProcessor.SetDomainEventHandledMessageTopic("DomainEventHandledMessageTopic");
 
             return enodeConfiguration;
@@ -80,7 +80,7 @@ namespace BankTransferSample.EQueueIntegrations
             _commandConsumer.Start();
             _eventPublisher.Start();
             _commandService.Start();
-            _failedCommandMessageSender.Start();
+            _commandExecutedMessageSender.Start();
             _domainEventHandledMessageSender.Start();
             _commandResultProcessor.Start();
 
@@ -97,11 +97,11 @@ namespace BankTransferSample.EQueueIntegrations
             {
                 var eventConsumerAllocatedQueues = _eventConsumer.Consumer.GetCurrentQueues();
                 var commandConsumerAllocatedQueues = _commandConsumer.Consumer.GetCurrentQueues();
-                var failedCommandMessageConsumerAllocatedQueues = _commandResultProcessor.FailedCommandMessageConsumer.GetCurrentQueues();
+                var commandExecutedMessageConsumerAllocatedQueues = _commandResultProcessor.CommandExecutedMessageConsumer.GetCurrentQueues();
                 var domainEventHandledMessageConsumerAllocatedQueues = _commandResultProcessor.DomainEventHandledMessageConsumer.GetCurrentQueues();
                 if (eventConsumerAllocatedQueues.Count() == 4
                     && commandConsumerAllocatedQueues.Count() == 4
-                    && failedCommandMessageConsumerAllocatedQueues.Count() == 4
+                    && commandExecutedMessageConsumerAllocatedQueues.Count() == 4
                     && domainEventHandledMessageConsumerAllocatedQueues.Count() == 4)
                 {
                     waitHandle.Set();
