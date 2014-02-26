@@ -14,21 +14,22 @@ namespace BankTransferSample.EQueueIntegrations
         public CommandTypeCodeManager()
         {
             _typeCodeDict.Add(100, typeof(CreateAccountCommand));
-            _typeCodeDict.Add(101, typeof(DepositCommand));
-            _typeCodeDict.Add(102, typeof(WithdrawCommand));
-            _typeCodeDict.Add(103, typeof(PrepareDebitCommand));
-            _typeCodeDict.Add(104, typeof(PrepareCreditCommand));
-            _typeCodeDict.Add(105, typeof(CommitDebitCommand));
-            _typeCodeDict.Add(106, typeof(CommitCreditCommand));
-            _typeCodeDict.Add(107, typeof(AbortDebitCommand));
-            _typeCodeDict.Add(108, typeof(AbortCreditCommand));
+            _typeCodeDict.Add(101, typeof(CreateTransactionPreparationCommand));
+            _typeCodeDict.Add(102, typeof(CommitTransactionPreparationCommand));
+            _typeCodeDict.Add(103, typeof(CancelTransactionPreparationCommand));
 
-            _typeCodeDict.Add(201, typeof(StartTransactionCommand));
-            _typeCodeDict.Add(202, typeof(ConfirmDebitPreparationCommand));
-            _typeCodeDict.Add(203, typeof(ConfirmCreditPreparationCommand));
-            _typeCodeDict.Add(204, typeof(ConfirmDebitCommand));
-            _typeCodeDict.Add(205, typeof(ConfirmCreditCommand));
-            _typeCodeDict.Add(206, typeof(AbortTransactionCommand));
+            _typeCodeDict.Add(201, typeof(StartDepositTransactionCommand));
+            _typeCodeDict.Add(202, typeof(ConfirmDepositPreparationCommand));
+            _typeCodeDict.Add(203, typeof(ConfirmDepositCommand));
+
+            _typeCodeDict.Add(301, typeof(StartTransferTransactionCommand));
+            _typeCodeDict.Add(302, typeof(ConfirmTransferOutPreparationCommand));
+            _typeCodeDict.Add(303, typeof(ConfirmTransferInPreparationCommand));
+            _typeCodeDict.Add(304, typeof(ConfirmTransferOutCommand));
+            _typeCodeDict.Add(305, typeof(ConfirmTransferInCommand));
+            _typeCodeDict.Add(306, typeof(StartCancelTransferTransactionCommand));
+            _typeCodeDict.Add(307, typeof(ConfirmTransferOutCanceledCommand));
+            _typeCodeDict.Add(308, typeof(ConfirmTransferInCanceledCommand));
         }
 
         public int GetTypeCode(ICommand command)

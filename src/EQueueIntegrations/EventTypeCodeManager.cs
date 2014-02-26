@@ -14,29 +14,26 @@ namespace BankTransferSample.EQueueIntegrations
         public EventTypeCodeManager()
         {
             _typeCodeDict.Add(100, typeof(AccountCreatedEvent));
-            _typeCodeDict.Add(101, typeof(CreditAbortedEvent));
-            _typeCodeDict.Add(102, typeof(CreditCommittedEvent));
-            _typeCodeDict.Add(103, typeof(CreditPreparationNotExistEvent));
-            _typeCodeDict.Add(104, typeof(CreditPreparedEvent));
-            _typeCodeDict.Add(105, typeof(DebitAbortedEvent));
-            _typeCodeDict.Add(106, typeof(DebitCommittedEvent));
-            _typeCodeDict.Add(107, typeof(DebitInsufficientBalanceEvent));
-            _typeCodeDict.Add(108, typeof(DebitPreparationNotExistEvent));
-            _typeCodeDict.Add(109, typeof(DebitPreparedEvent));
-            _typeCodeDict.Add(110, typeof(DepositedEvent));
-            _typeCodeDict.Add(111, typeof(DuplicatedCreditPreparationEvent));
-            _typeCodeDict.Add(112, typeof(DuplicatedDebitPreparationEvent));
-            _typeCodeDict.Add(113, typeof(WithdrawInsufficientBalanceEvent));
-            _typeCodeDict.Add(114, typeof(WithdrawnEvent));
+            _typeCodeDict.Add(101, typeof(TransactionPreparationCreatedEvent));
+            _typeCodeDict.Add(102, typeof(TransactionPreparationCommittedEvent));
+            _typeCodeDict.Add(103, typeof(TransactionPreparationCanceledEvent));
+            _typeCodeDict.Add(104, typeof(InsufficientBalanceEvent));
 
-            _typeCodeDict.Add(201, typeof(CreditConfirmedEvent));
-            _typeCodeDict.Add(202, typeof(CreditPreparationConfirmedEvent));
-            _typeCodeDict.Add(203, typeof(DebitConfirmedEvent));
-            _typeCodeDict.Add(204, typeof(DebitPreparationConfirmedEvent));
-            _typeCodeDict.Add(205, typeof(TransactionAbortedEvent));
-            _typeCodeDict.Add(206, typeof(TransactionCommittedEvent));
-            _typeCodeDict.Add(207, typeof(TransactionCompletedEvent));
-            _typeCodeDict.Add(208, typeof(TransactionStartedEvent));
+            _typeCodeDict.Add(201, typeof(DepositTransactionStartedEvent));
+            _typeCodeDict.Add(202, typeof(DepositPreparationConfirmedEvent));
+            _typeCodeDict.Add(203, typeof(DepositTransactionCompletedEvent));
+
+            _typeCodeDict.Add(301, typeof(TransferTransactionStartedEvent));
+            _typeCodeDict.Add(302, typeof(TransferOutPreparationConfirmedEvent));
+            _typeCodeDict.Add(303, typeof(TransferInPreparationConfirmedEvent));
+            _typeCodeDict.Add(304, typeof(TransferOutConfirmedEvent));
+            _typeCodeDict.Add(305, typeof(TransferInConfirmedEvent));
+            _typeCodeDict.Add(306, typeof(TransferTransactionConfirmedEvent));
+            _typeCodeDict.Add(307, typeof(TransferTransactionCompletedEvent));
+            _typeCodeDict.Add(308, typeof(TransferTransactionCancelStartedEvent));
+            _typeCodeDict.Add(309, typeof(TransferOutCanceledConfirmedEvent));
+            _typeCodeDict.Add(310, typeof(TransferInCanceledConfirmedEvent));
+            _typeCodeDict.Add(311, typeof(TransferTransactionCanceledEvent));
         }
 
         public int GetTypeCode(IDomainEvent domainEvent)

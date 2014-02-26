@@ -1,4 +1,5 @@
 ﻿using System;
+using BankTransferSample.Domain;
 using ECommon.Utilities;
 using ENode.Eventing;
 
@@ -9,7 +10,7 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class AccountCreatedEvent : DomainEvent<string>
     {
-        /// <summary>账号拥有者
+        /// <summary>账户拥有者
         /// </summary>
         public string Owner { get; private set; }
         /// <summary>开户时间
@@ -23,131 +24,65 @@ namespace BankTransferSample.DomainEvents
             CreatedTime = createdTime;
         }
     }
-    /// <summary>交易转入已终止
+    /// <summary>账户预交易已创建
     /// </summary>
     [Serializable]
-    public class CreditAbortedEvent : DomainEvent<string>
+    public class TransactionPreparationCreatedEvent : DomainEvent<string>
     {
-        public string TransactionId { get; private set; }
-        public double Amount { get; private set; }
-        public DateTime AbortedTime { get; private set; }
+        public TransactionPreparation TransactionPreparation { get; private set; }
+        public DateTime CreatedTime { get; private set; }
 
-        public CreditAbortedEvent(string accountId, string transactionId, double amount, DateTime abortedTime)
-            : base(accountId)
+        public TransactionPreparationCreatedEvent(TransactionPreparation transactionPreparation, DateTime createdTime)
+            : base(transactionPreparation.AccountId)
         {
-            TransactionId = transactionId;
-            Amount = amount;
-            AbortedTime = abortedTime;
+            TransactionPreparation = transactionPreparation;
+            CreatedTime = createdTime;
         }
     }
-    /// <summary>交易转入已提交
+    /// <summary>账户预交易已执行
     /// </summary>
     [Serializable]
-    public class CreditCommittedEvent : DomainEvent<string>
+    public class TransactionPreparationCommittedEvent : DomainEvent<string>
     {
-        /// <summary>交易ID
-        /// </summary>
-        public string TransactionId { get; private set; }
-        /// <summary>转入金额
-        /// </summary>
-        public double Amount { get; private set; }
-        /// <summary>当前余额
-        /// </summary>
         public double CurrentBalance { get; private set; }
-        /// <summary>转入时间
-        /// </summary>
-        public DateTime TransactionTime { get; private set; }
+        public TransactionPreparation TransactionPreparation { get; private set; }
+        public DateTime CommittedTime { get; private set; }
 
-        public CreditCommittedEvent(string accountId, string transactionId, double amount, double currentBalance, DateTime transactionTime)
-            : base(accountId)
+        public TransactionPreparationCommittedEvent(double currentBalance, TransactionPreparation transactionPreparation, DateTime committedTime)
+            : base(transactionPreparation.AccountId)
         {
-            TransactionId = transactionId;
-            Amount = amount;
             CurrentBalance = currentBalance;
-            TransactionTime = transactionTime;
+            TransactionPreparation = transactionPreparation;
+            CommittedTime = committedTime;
         }
     }
-    /// <summary>交易预转入信息不存在
+    /// <summary>账户预交易已取消
     /// </summary>
     [Serializable]
-    public class CreditPreparationNotExistEvent : DomainEvent<string>
+    public class TransactionPreparationCanceledEvent : DomainEvent<string>
     {
-        public string TransactionId { get; private set; }
+        public TransactionPreparation TransactionPreparation { get; private set; }
+        public DateTime CanceledTime { get; private set; }
 
-        public CreditPreparationNotExistEvent(string accountId, string transactionId)
-            : base(accountId)
+        public TransactionPreparationCanceledEvent(TransactionPreparation transactionPreparation, DateTime canceledTime)
+            : base(transactionPreparation.AccountId)
         {
-            TransactionId = transactionId;
+            TransactionPreparation = transactionPreparation;
+            CanceledTime = canceledTime;
         }
     }
-    /// <summary>交易预转入成功
+    /// <summary>余额不足，该领域事件不会改变账户的状态
     /// </summary>
     [Serializable]
-    public class CreditPreparedEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-        public double Amount { get; private set; }
-
-        public CreditPreparedEvent(string accountId, string transactionId, double amount)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-            Amount = amount;
-        }
-    }
-    /// <summary>交易转出已终止
-    /// </summary>
-    [Serializable]
-    public class DebitAbortedEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-        public double Amount { get; private set; }
-        public DateTime AbortedTime { get; private set; }
-
-        public DebitAbortedEvent(string accountId, string transactionId, double amount, DateTime abortedTime)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-            Amount = amount;
-            AbortedTime = abortedTime;
-        }
-    }
-    /// <summary>交易转出已提交
-    /// </summary>
-    [Serializable]
-    public class DebitCommittedEvent : DomainEvent<string>
+    public class InsufficientBalanceEvent : DomainEvent<string>
     {
         /// <summary>交易ID
         /// </summary>
         public string TransactionId { get; private set; }
-        /// <summary>转出金额
+        /// <summary>交易类型
         /// </summary>
-        public double Amount { get; private set; }
-        /// <summary>当前余额
-        /// </summary>
-        public double CurrentBalance { get; private set; }
-        /// <summary>转出时间
-        /// </summary>
-        public DateTime TransactionTime { get; private set; }
-
-        public DebitCommittedEvent(string accountId, string transactionId, double amount, double currentBalance, DateTime transactionTime)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-            Amount = amount;
-            CurrentBalance = currentBalance;
-            TransactionTime = transactionTime;
-        }
-    }
-    /// <summary>余额不足不允许转出操作
-    /// </summary>
-    [Serializable]
-    public class DebitInsufficientBalanceEvent : DomainEvent<string>
-    {
-        /// <summary>交易ID
-        /// </summary>
-        public string TransactionId { get; private set; }
-        /// <summary>转出金额
+        public TransactionType TransactionType { get; private set; }
+        /// <summary>预借金额
         /// </summary>
         public double Amount { get; private set; }
         /// <summary>当前余额
@@ -157,136 +92,14 @@ namespace BankTransferSample.DomainEvents
         /// </summary>
         public double CurrentAvailableBalance { get; private set; }
 
-        public DebitInsufficientBalanceEvent(string accountId, string transactionId, double amount, double currentBalance, double currentAvailableBalance)
+        public InsufficientBalanceEvent(string accountId, string transactionId, TransactionType transactionType, double amount, double currentBalance, double currentAvailableBalance)
             : base(accountId)
         {
             TransactionId = transactionId;
+            TransactionType = transactionType;
             Amount = amount;
             CurrentBalance = currentBalance;
             CurrentAvailableBalance = currentAvailableBalance;
-        }
-    }
-    /// <summary>交易预转出信息不存在
-    /// </summary>
-    [Serializable]
-    public class DebitPreparationNotExistEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-
-        public DebitPreparationNotExistEvent(string accountId, string transactionId)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-        }
-    }
-    /// <summary>交易预转出成功
-    /// </summary>
-    [Serializable]
-    public class DebitPreparedEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-        public double Amount { get; private set; }
-
-        public DebitPreparedEvent(string accountId, string transactionId, double amount)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-            Amount = amount;
-        }
-    }
-    /// <summary>已存款
-    /// </summary>
-    [Serializable]
-    public class DepositedEvent : DomainEvent<string>
-    {
-        /// <summary>存款金额
-        /// </summary>
-        public double Amount { get; private set; }
-        /// <summary>当前余额
-        /// </summary>
-        public double CurrentBalance { get; private set; }
-        /// <summary>存款时间
-        /// </summary>
-        public DateTime TransactionTime { get; private set; }
-
-        public DepositedEvent(string accountId, double amount, double currentBalance, DateTime transactionTime)
-            : base(accountId)
-        {
-            Amount = amount;
-            CurrentBalance = currentBalance;
-            TransactionTime = transactionTime;
-        }
-    }
-    /// <summary>重复的预转入操作
-    /// </summary>
-    [Serializable]
-    public class DuplicatedCreditPreparationEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-
-        public DuplicatedCreditPreparationEvent(string accountId, string transactionId)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-        }
-    }
-    /// <summary>重复的预转出操作
-    /// </summary>
-    [Serializable]
-    public class DuplicatedDebitPreparationEvent : DomainEvent<string>
-    {
-        public string TransactionId { get; private set; }
-
-        public DuplicatedDebitPreparationEvent(string accountId, string transactionId)
-            : base(accountId)
-        {
-            TransactionId = transactionId;
-        }
-    }
-    /// <summary>余额不足不允许取款操作
-    /// </summary>
-    [Serializable]
-    public class WithdrawInsufficientBalanceEvent : DomainEvent<string>
-    {
-        /// <summary>取款金额
-        /// </summary>
-        public double Amount { get; private set; }
-        /// <summary>当前余额
-        /// </summary>
-        public double CurrentBalance { get; private set; }
-        /// <summary>当前可用余额
-        /// </summary>
-        public double CurrentAvailableBalance { get; private set; }
-
-        public WithdrawInsufficientBalanceEvent(string accountId, double amount, double currentBalance, double currentAvailableBalance)
-            : base(accountId)
-        {
-            Amount = amount;
-            CurrentBalance = currentBalance;
-            CurrentAvailableBalance = currentAvailableBalance;
-        }
-    }
-    /// <summary>已取款
-    /// </summary>
-    [Serializable]
-    public class WithdrawnEvent : DomainEvent<string>
-    {
-        /// <summary>取款金额
-        /// </summary>
-        public double Amount { get; private set; }
-        /// <summary>当前余额
-        /// </summary>
-        public double CurrentBalance { get; private set; }
-        /// <summary>取款时间
-        /// </summary>
-        public DateTime TransactionTime { get; private set; }
-
-        public WithdrawnEvent(string accountId, double amount, double currentBalance, DateTime transactionTime)
-            : base(accountId)
-        {
-            Amount = amount;
-            CurrentBalance = currentBalance;
-            TransactionTime = transactionTime;
         }
     }
 }

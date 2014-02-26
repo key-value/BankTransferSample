@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using BankTransferSample.DomainEvents;
-using ECommon.Utilities;
+using BankTransferSample.Exceptions;
 using ENode.Domain;
 
 namespace BankTransferSample.Domain
 {
-    /// <summary>银行账号聚合根，封装银行账户余额变动的数据一致性
+    /// <summary>银行账户聚合根，封装银行账户余额变动的数据一致性
     /// </summary>
     [Serializable]
     public class BankAccount : AggregateRoot<string>
     {
         #region Private Variables
 
-        private IList<DebitPreparation> _debitPreparations;
-        private IList<CreditPreparation> _creditPreparations;
+        private IList<TransactionPreparation> _transactionPreparations;
 
         #endregion
 
@@ -45,140 +44,94 @@ namespace BankTransferSample.Domain
 
         #region Public Methods
 
-        /// <summary>存款
-        /// </summary>
-        /// <param name="amount"></param>
-        public void Deposit(double amount)
-        {
-            RaiseEvent(new DepositedEvent(Id, amount, Balance + amount, DateTime.Now));
-        }
-        /// <summary>取款
-        /// </summary>
-        /// <param name="amount"></param>
-        public void Withdraw(double amount)
-        {
-            var availableBalance = GetAvailableBalance();
-            if (availableBalance < amount)
-            {
-                RaiseEvent(new WithdrawInsufficientBalanceEvent(Id, amount, Balance, availableBalance));
-                return;
-            }
-            RaiseEvent(new WithdrawnEvent(Id, amount, Balance - amount, DateTime.Now));
-        }
-        /// <summary>预转出
+        /// <summary>创建预交易
         /// </summary>
         /// <param name="transactionId"></param>
+        /// <param name="transactionType"></param>
+        /// <param name="preparationType"></param>
         /// <param name="amount"></param>
-        public void PrepareDebit(string transactionId, double amount)
+        public void CreateTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
         {
-            if (_debitPreparations == null)
+            if (_transactionPreparations == null)
             {
-                _debitPreparations = new List<DebitPreparation>();
+                _transactionPreparations = new List<TransactionPreparation>();
             }
-            if (_debitPreparations.Any(x => x.TransactionId == transactionId))
+            if (_transactionPreparations.Any(x => x.TransactionId == transactionId && x.TransactionType == transactionType && x.PreparationType == preparationType))
             {
-                RaiseEvent(new DuplicatedDebitPreparationEvent(Id, transactionId));
                 return;
             }
             var availableBalance = GetAvailableBalance();
-            if (availableBalance < amount)
+            if (preparationType == PreparationType.DebitPreparation && availableBalance < amount)
             {
-                RaiseEvent(new DebitInsufficientBalanceEvent(Id, transactionId, amount, Balance, availableBalance));
+                RaiseEvent(new InsufficientBalanceEvent(Id, transactionId, transactionType, amount, Balance, availableBalance));
                 return;
             }
 
-            RaiseEvent(new DebitPreparedEvent(Id, transactionId, amount));
+            RaiseEvent(new TransactionPreparationCreatedEvent(new TransactionPreparation(Id, transactionId, transactionType, preparationType, amount), DateTime.Now));
         }
-        /// <summary>预转入
+        /// <summary>执行预交易
         /// </summary>
         /// <param name="transactionId"></param>
-        /// <param name="amount"></param>
-        public void PrepareCredit(string transactionId, double amount)
+        /// <param name="transactionType"></param>
+        public void CommitTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType)
         {
-            if (_creditPreparations == null)
+            var transactionPreparation = GetTransactionPreparation(transactionId, transactionType, preparationType);
+            var currentBalance = Balance;
+            if (preparationType == PreparationType.DebitPreparation)
             {
-                _creditPreparations = new List<CreditPreparation>();
+                currentBalance -= transactionPreparation.Amount;
             }
-            if (_creditPreparations.Any(x => x.TransactionId == transactionId))
+            else if (preparationType == PreparationType.CreditPreparation)
             {
-                RaiseEvent(new DuplicatedCreditPreparationEvent(Id, transactionId));
-                return;
+                currentBalance += transactionPreparation.Amount;
             }
-
-            RaiseEvent(new CreditPreparedEvent(Id, transactionId, amount));
+            RaiseEvent(new TransactionPreparationCommittedEvent(currentBalance, transactionPreparation, DateTime.Now));
         }
-        /// <summary>提交转出
+        /// <summary>取消预交易
         /// </summary>
         /// <param name="transactionId"></param>
-        public void CommitDebit(string transactionId)
+        /// <param name="transactionType"></param>
+        /// <param name="preparationType"></param>
+        public void CancelTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType)
         {
-            var preparation = _debitPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
-            if (preparation == null)
-            {
-                RaiseEvent(new DebitPreparationNotExistEvent(Id, transactionId));
-                return;
-            }
-
-            RaiseEvent(new DebitCommittedEvent(Id, transactionId, preparation.Amount, Balance - preparation.Amount, DateTime.Now));
-        }
-        /// <summary>提交转入
-        /// </summary>
-        /// <param name="transactionId"></param>
-        public void CommitCredit(string transactionId)
-        {
-            var preparation = _creditPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
-            if (preparation == null)
-            {
-                RaiseEvent(new CreditPreparationNotExistEvent(Id, transactionId));
-                return;
-            }
-
-            RaiseEvent(new CreditCommittedEvent(Id, transactionId, preparation.Amount, Balance + preparation.Amount, DateTime.Now));
-        }
-        /// <summary>终止转出
-        /// </summary>
-        /// <param name="transactionId"></param>
-        public void AbortDebit(string transactionId)
-        {
-            var preparation = _debitPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
-            if (preparation != null)
-            {
-                RaiseEvent(new DebitAbortedEvent(Id, transactionId, preparation.Amount, DateTime.Now));
-            }
-        }
-        /// <summary>终止转入
-        /// </summary>
-        /// <param name="transactionId"></param>
-        public void AbortCredit(string transactionId)
-        {
-            var preparation = _creditPreparations.SingleOrDefault(x => x.TransactionId == transactionId);
-            if (preparation != null)
-            {
-                RaiseEvent(new CreditAbortedEvent(Id, transactionId, preparation.Amount, DateTime.Now));
-            }
+            RaiseEvent(new TransactionPreparationCanceledEvent(GetTransactionPreparation(transactionId, transactionType, preparationType), DateTime.Now));
         }
 
         #endregion
 
         #region Private Methods
 
-        /// <summary>获取当前真正可用的余额，需要将已冻结的余额计算在内
+        /// <summary>获取当前账户内的一笔预交易，如果预交易不存在，则抛出异常
         /// </summary>
-        /// <returns></returns>
+        private TransactionPreparation GetTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType)
+        {
+            if (_transactionPreparations == null || _transactionPreparations.Count == 0)
+            {
+                throw new TransactionPreparationNotExistException(Id, transactionId, transactionType);
+            }
+            var transactionPreparation = _transactionPreparations.SingleOrDefault(x => x.TransactionId == transactionId && x.TransactionType == transactionType && x.PreparationType == preparationType);
+            if (transactionPreparation == null)
+            {
+                throw new TransactionPreparationNotExistException(Id, transactionId, transactionType);
+            }
+            return transactionPreparation;
+        }
+        /// <summary>获取当前账户的可用余额，需要将已冻结的余额计算在内
+        /// </summary>
         private double GetAvailableBalance()
         {
-            if (_debitPreparations.Count == 0)
+            if (_transactionPreparations == null || _transactionPreparations.Count == 0)
             {
                 return Balance;
             }
 
-            var totalDebitPreparationAmount = 0D;
-            foreach (var preparation in _debitPreparations)
+            var totalDebitTransactionPreparationAmount = 0D;
+            foreach (var debitTransactionPreparation in _transactionPreparations.Where(x => x.PreparationType == PreparationType.DebitPreparation))
             {
-                totalDebitPreparationAmount += preparation.Amount;
+                totalDebitTransactionPreparationAmount += debitTransactionPreparation.Amount;
             }
 
-            return Balance - totalDebitPreparationAmount;
+            return Balance - totalDebitTransactionPreparationAmount;
         }
 
         #endregion
@@ -187,44 +140,29 @@ namespace BankTransferSample.Domain
 
         private void Handle(AccountCreatedEvent evnt)
         {
-            _debitPreparations = new List<DebitPreparation>();
-            _creditPreparations = new List<CreditPreparation>();
+            _transactionPreparations = new List<TransactionPreparation>();
             Id = evnt.AggregateRootId;
             Owner = evnt.Owner;
         }
-        private void Handle(DepositedEvent evnt)
+        private void Handle(InsufficientBalanceEvent evnt) { }
+        private void Handle(TransactionPreparationCreatedEvent evnt)
         {
+            _transactionPreparations.Add(evnt.TransactionPreparation);
+        }
+        private void Handle(TransactionPreparationCommittedEvent evnt)
+        {
+            _transactionPreparations.Remove(_transactionPreparations.Single(x =>
+                x.TransactionId == evnt.TransactionPreparation.TransactionId &&
+                x.TransactionType == evnt.TransactionPreparation.TransactionType &&
+                x.PreparationType == evnt.TransactionPreparation.PreparationType));
             Balance = evnt.CurrentBalance;
         }
-        private void Handle(WithdrawnEvent evnt)
+        private void Handle(TransactionPreparationCanceledEvent evnt)
         {
-            Balance = evnt.CurrentBalance;
-        }
-        private void Handle(DebitPreparedEvent evnt)
-        {
-            _debitPreparations.Add(new DebitPreparation(evnt.TransactionId, evnt.Amount));
-        }
-        private void Handle(CreditPreparedEvent evnt)
-        {
-            _creditPreparations.Add(new CreditPreparation(evnt.TransactionId, evnt.Amount));
-        }
-        private void Handle(DebitCommittedEvent evnt)
-        {
-            Balance = evnt.CurrentBalance;
-            _debitPreparations.Remove(_debitPreparations.Single(x => x.TransactionId == evnt.TransactionId));
-        }
-        private void Handle(CreditCommittedEvent evnt)
-        {
-            Balance = evnt.CurrentBalance;
-            _creditPreparations.Remove(_creditPreparations.Single(x => x.TransactionId == evnt.TransactionId));
-        }
-        private void Handle(DebitAbortedEvent evnt)
-        {
-            _debitPreparations.Remove(_debitPreparations.Single(x => x.TransactionId == evnt.TransactionId));
-        }
-        private void Handle(CreditAbortedEvent evnt)
-        {
-            _creditPreparations.Remove(_creditPreparations.Single(x => x.TransactionId == evnt.TransactionId));
+            _transactionPreparations.Remove(_transactionPreparations.Single(x =>
+                x.TransactionId == evnt.TransactionPreparation.TransactionId &&
+                x.TransactionType == evnt.TransactionPreparation.TransactionType &&
+                x.PreparationType == evnt.TransactionPreparation.PreparationType));
         }
 
         #endregion
