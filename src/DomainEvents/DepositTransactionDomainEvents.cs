@@ -11,14 +11,12 @@ namespace BankTransferSample.DomainEvents
     {
         public string AccountId { get; private set; }
         public double Amount { get; private set; }
-        public DateTime StartedTime { get; private set; }
 
-        public DepositTransactionStartedEvent(string transactionId, string accountId, double amount, DateTime startedTime)
+        public DepositTransactionStartedEvent(string transactionId, string accountId, double amount)
             : base(transactionId)
         {
             AccountId = accountId;
             Amount = amount;
-            StartedTime = startedTime;
         }
     }
     /// <summary>存款交易预存款已确认
@@ -27,13 +25,11 @@ namespace BankTransferSample.DomainEvents
     public class DepositPreparationConfirmedEvent : DomainEvent<string>
     {
         public string AccountId { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
 
-        public DepositPreparationConfirmedEvent(string transactionId, string accountId, DateTime confirmedTime)
+        public DepositPreparationConfirmedEvent(string transactionId, string accountId)
             : base(transactionId)
         {
             AccountId = accountId;
-            ConfirmedTime = confirmedTime;
         }
     }
     /// <summary>存款交易已完成
@@ -41,12 +37,12 @@ namespace BankTransferSample.DomainEvents
     [Serializable]
     public class DepositTransactionCompletedEvent : DomainEvent<string>, IProcessCompletedEvent
     {
-        public DateTime CompletedTime { get; private set; }
+        public string AccountId { get; private set; }
 
-        public DepositTransactionCompletedEvent(string transactionId, DateTime completedTime)
+        public DepositTransactionCompletedEvent(string transactionId, string accountId)
             : base(transactionId)
         {
-            CompletedTime = completedTime;
+            AccountId = accountId;
         }
 
         string IProcessCompletedEvent.ProcessId

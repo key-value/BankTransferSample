@@ -12,7 +12,7 @@ namespace BankTransferSample.ProcessManagers
     [Component]
     public class TransferTransactionProcessManager :
         IEventHandler<TransferTransactionStartedEvent>,                  //转账交易已开始
-        IEventHandler<TransactionPreparationCreatedEvent>,               //账户预交易已创建
+        IEventHandler<TransactionPreparationAddedEvent>,                 //账户预交易已添加
         IEventHandler<TransactionPreparationCommittedEvent>,             //账户预交易已提交
         IEventHandler<TransactionPreparationCanceledEvent>,              //账户预交易已取消
         IEventHandler<TransferTransactionConfirmedEvent>,                //转账交易已确认
@@ -28,21 +28,21 @@ namespace BankTransferSample.ProcessManagers
 
         public void Handle(TransferTransactionStartedEvent evnt)
         {
-            _commandService.Send(new CreateTransactionPreparationCommand(
+            _commandService.Send(new AddTransactionPreparationCommand(
                 evnt.TransactionInfo.SourceAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.DebitPreparation,
                 evnt.TransactionInfo.Amount));
 
-            _commandService.Send(new CreateTransactionPreparationCommand(
+            _commandService.Send(new AddTransactionPreparationCommand(
                 evnt.TransactionInfo.TargetAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.CreditPreparation,
                 evnt.TransactionInfo.Amount));
         }
-        public void Handle(TransactionPreparationCreatedEvent evnt)
+        public void Handle(TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {

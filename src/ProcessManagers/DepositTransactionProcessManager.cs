@@ -13,7 +13,7 @@ namespace BankTransferSample.ProcessManagers
     public class DepositTransactionProcessManager :
         IEventHandler<DepositTransactionStartedEvent>,                    //存款交易已开始
         IEventHandler<DepositPreparationConfirmedEvent>,                  //存款交易预存款已确认
-        IEventHandler<TransactionPreparationCreatedEvent>,                //账户预交易已创建
+        IEventHandler<TransactionPreparationAddedEvent>,                  //账户预交易已添加
         IEventHandler<TransactionPreparationCommittedEvent>               //账户预交易已提交
     {
         private readonly ICommandService _commandService;
@@ -25,14 +25,14 @@ namespace BankTransferSample.ProcessManagers
 
         public void Handle(DepositTransactionStartedEvent evnt)
         {
-            _commandService.Send(new CreateTransactionPreparationCommand(
+            _commandService.Send(new AddTransactionPreparationCommand(
                 evnt.AccountId,
                 evnt.AggregateRootId,
                 TransactionType.DepositTransaction,
                 PreparationType.CreditPreparation,
                 evnt.Amount));
         }
-        public void Handle(TransactionPreparationCreatedEvent evnt)
+        public void Handle(TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction)
             {

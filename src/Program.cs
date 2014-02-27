@@ -75,7 +75,7 @@ namespace BankTransferSample
     [Component]
     public class BasicTestEventLogger :
         IEventHandler<AccountCreatedEvent>,
-        IEventHandler<TransactionPreparationCreatedEvent>,
+        IEventHandler<TransactionPreparationAddedEvent>,
         IEventHandler<TransactionPreparationCommittedEvent>,
         IEventHandler<TransferTransactionStartedEvent>,
         IEventHandler<TransferOutPreparationConfirmedEvent>,
@@ -86,7 +86,7 @@ namespace BankTransferSample
         {
             Console.WriteLine("账户已创建，账户：{0}，所有者：{1}", evnt.AggregateRootId, evnt.Owner);
         }
-        public void Handle(TransactionPreparationCreatedEvent evnt)
+        public void Handle(TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {

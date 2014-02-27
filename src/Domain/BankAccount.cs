@@ -33,24 +33,18 @@ namespace BankTransferSample.Domain
 
         /// <summary>构造函数
         /// </summary>
-        /// <param name="accountId"></param>
-        /// <param name="owner"></param>
         public BankAccount(string accountId, string owner) : base(accountId)
         {
-            RaiseEvent(new AccountCreatedEvent(accountId, owner, DateTime.Now));
+            RaiseEvent(new AccountCreatedEvent(accountId, owner));
         }
 
         #endregion
 
         #region Public Methods
 
-        /// <summary>创建预交易
+        /// <summary>添加一笔预交易
         /// </summary>
-        /// <param name="transactionId"></param>
-        /// <param name="transactionType"></param>
-        /// <param name="preparationType"></param>
-        /// <param name="amount"></param>
-        public void CreateTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
+        public void AddTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
         {
             if (_transactionPreparations == null)
             {
@@ -67,12 +61,10 @@ namespace BankTransferSample.Domain
                 return;
             }
 
-            RaiseEvent(new TransactionPreparationCreatedEvent(new TransactionPreparation(Id, transactionId, transactionType, preparationType, amount), DateTime.Now));
+            RaiseEvent(new TransactionPreparationAddedEvent(new TransactionPreparation(Id, transactionId, transactionType, preparationType, amount)));
         }
         /// <summary>执行预交易
         /// </summary>
-        /// <param name="transactionId"></param>
-        /// <param name="transactionType"></param>
         public void CommitTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType)
         {
             var transactionPreparation = GetTransactionPreparation(transactionId, transactionType, preparationType);
@@ -85,16 +77,13 @@ namespace BankTransferSample.Domain
             {
                 currentBalance += transactionPreparation.Amount;
             }
-            RaiseEvent(new TransactionPreparationCommittedEvent(currentBalance, transactionPreparation, DateTime.Now));
+            RaiseEvent(new TransactionPreparationCommittedEvent(currentBalance, transactionPreparation));
         }
         /// <summary>取消预交易
         /// </summary>
-        /// <param name="transactionId"></param>
-        /// <param name="transactionType"></param>
-        /// <param name="preparationType"></param>
         public void CancelTransactionPreparation(string transactionId, TransactionType transactionType, PreparationType preparationType)
         {
-            RaiseEvent(new TransactionPreparationCanceledEvent(GetTransactionPreparation(transactionId, transactionType, preparationType), DateTime.Now));
+            RaiseEvent(new TransactionPreparationCanceledEvent(GetTransactionPreparation(transactionId, transactionType, preparationType)));
         }
 
         #endregion
@@ -145,7 +134,7 @@ namespace BankTransferSample.Domain
             Owner = evnt.Owner;
         }
         private void Handle(InsufficientBalanceEvent evnt) { }
-        private void Handle(TransactionPreparationCreatedEvent evnt)
+        private void Handle(TransactionPreparationAddedEvent evnt)
         {
             _transactionPreparations.Add(evnt.TransactionPreparation);
         }

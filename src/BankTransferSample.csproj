@@ -53,8 +53,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\ecommon.log4net.1.0.6\lib\net40\ECommon.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="ENode">
-      <HintPath>packages\enode.2.0.9\lib\net40\ENode.dll</HintPath>
+    <Reference Include="ENode, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\enode.2.1.0\lib\net40\ENode.dll</HintPath>
     </Reference>
     <Reference Include="ENode.EQueue">
       <HintPath>packages\enode.equeue.1.1.1\lib\net40\ENode.EQueue.dll</HintPath>

@@ -49,7 +49,7 @@ namespace BankTransferSample.Domain
         /// <param name="transactionInfo"></param>
         public TransferTransaction(TransferTransactionInfo transactionInfo) : base(transactionInfo.TransactionId)
         {
-            RaiseEvent(new TransferTransactionStartedEvent(transactionInfo, DateTime.Now));
+            RaiseEvent(new TransferTransactionStartedEvent(transactionInfo));
         }
 
         #endregion
@@ -64,10 +64,10 @@ namespace BankTransferSample.Domain
             {
                 if (!IsTransferOutPreparationConfirmed)
                 {
-                    RaiseEvent(new TransferOutPreparationConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferOutPreparationConfirmedEvent(TransactionInfo));
                     if (IsTransferInPreparationConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                        RaiseEvent(new TransferTransactionConfirmedEvent(TransactionInfo));
                     }
                 }
             }
@@ -80,10 +80,10 @@ namespace BankTransferSample.Domain
             {
                 if (!IsTransferInPreparationConfirmed)
                 {
-                    RaiseEvent(new TransferInPreparationConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferInPreparationConfirmedEvent(TransactionInfo));
                     if (IsTransferOutPreparationConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                        RaiseEvent(new TransferTransactionConfirmedEvent(TransactionInfo));
                     }
                 }
             }
@@ -96,10 +96,10 @@ namespace BankTransferSample.Domain
             {
                 if (!IsTransferOutConfirmed)
                 {
-                    RaiseEvent(new TransferOutConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferOutConfirmedEvent(TransactionInfo));
                     if (IsTransferInConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCompletedEvent(Id, TransactionInfo, DateTime.Now));
+                        RaiseEvent(new TransferTransactionCompletedEvent(TransactionInfo));
                     }
                 }
             }
@@ -112,10 +112,10 @@ namespace BankTransferSample.Domain
             {
                 if (!IsTransferInConfirmed)
                 {
-                    RaiseEvent(new TransferInConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferInConfirmedEvent(TransactionInfo));
                     if (IsTransferOutConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCompletedEvent(Id, TransactionInfo, DateTime.Now));
+                        RaiseEvent(new TransferTransactionCompletedEvent(TransactionInfo));
                     }
                 }
             }
@@ -126,7 +126,7 @@ namespace BankTransferSample.Domain
         {
             if (Status == TransactionStatus.Started)
             {
-                RaiseEvent(new TransferTransactionCancelStartedEvent(Id, TransactionInfo));
+                RaiseEvent(new TransferTransactionCancelStartedEvent(TransactionInfo));
             }
         }
         /// <summary>确认转出操作已取消
@@ -135,10 +135,10 @@ namespace BankTransferSample.Domain
         {
             if (!IsCancelTransferOutConfirmed)
             {
-                RaiseEvent(new TransferOutCanceledConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                RaiseEvent(new TransferOutCanceledConfirmedEvent(TransactionInfo));
                 if (IsCancelTransferInConfirmed)
                 {
-                    RaiseEvent(new TransferTransactionCanceledEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
                 }
             }
         }
@@ -148,10 +148,10 @@ namespace BankTransferSample.Domain
         {
             if (!IsCancelTransferInConfirmed)
             {
-                RaiseEvent(new TransferInCanceledConfirmedEvent(Id, TransactionInfo, DateTime.Now));
+                RaiseEvent(new TransferInCanceledConfirmedEvent(TransactionInfo));
                 if (IsCancelTransferOutConfirmed)
                 {
-                    RaiseEvent(new TransferTransactionCanceledEvent(Id, TransactionInfo, DateTime.Now));
+                    RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
                 }
             }
         }
@@ -164,7 +164,6 @@ namespace BankTransferSample.Domain
         {
             Id = evnt.AggregateRootId;
             TransactionInfo = evnt.TransactionInfo;
-            StartedTime = evnt.StartedTime;
             Status = TransactionStatus.Started;
         }
         private void Handle(TransferOutPreparationConfirmedEvent evnt)

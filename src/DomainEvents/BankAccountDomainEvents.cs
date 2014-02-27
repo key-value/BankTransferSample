@@ -1,6 +1,5 @@
 ﻿using System;
 using BankTransferSample.Domain;
-using ECommon.Utilities;
 using ENode.Eventing;
 
 namespace BankTransferSample.DomainEvents
@@ -13,30 +12,24 @@ namespace BankTransferSample.DomainEvents
         /// <summary>账户拥有者
         /// </summary>
         public string Owner { get; private set; }
-        /// <summary>开户时间
-        /// </summary>
-        public DateTime CreatedTime { get; private set; }
 
-        public AccountCreatedEvent(string accountId, string owner, DateTime createdTime)
+        public AccountCreatedEvent(string accountId, string owner)
             : base(accountId)
         {
             Owner = owner;
-            CreatedTime = createdTime;
         }
     }
-    /// <summary>账户预交易已创建
+    /// <summary>账户预交易已添加
     /// </summary>
     [Serializable]
-    public class TransactionPreparationCreatedEvent : DomainEvent<string>
+    public class TransactionPreparationAddedEvent : DomainEvent<string>
     {
         public TransactionPreparation TransactionPreparation { get; private set; }
-        public DateTime CreatedTime { get; private set; }
 
-        public TransactionPreparationCreatedEvent(TransactionPreparation transactionPreparation, DateTime createdTime)
+        public TransactionPreparationAddedEvent(TransactionPreparation transactionPreparation)
             : base(transactionPreparation.AccountId)
         {
             TransactionPreparation = transactionPreparation;
-            CreatedTime = createdTime;
         }
     }
     /// <summary>账户预交易已执行
@@ -46,14 +39,12 @@ namespace BankTransferSample.DomainEvents
     {
         public double CurrentBalance { get; private set; }
         public TransactionPreparation TransactionPreparation { get; private set; }
-        public DateTime CommittedTime { get; private set; }
 
-        public TransactionPreparationCommittedEvent(double currentBalance, TransactionPreparation transactionPreparation, DateTime committedTime)
+        public TransactionPreparationCommittedEvent(double currentBalance, TransactionPreparation transactionPreparation)
             : base(transactionPreparation.AccountId)
         {
             CurrentBalance = currentBalance;
             TransactionPreparation = transactionPreparation;
-            CommittedTime = committedTime;
         }
     }
     /// <summary>账户预交易已取消
@@ -62,13 +53,11 @@ namespace BankTransferSample.DomainEvents
     public class TransactionPreparationCanceledEvent : DomainEvent<string>
     {
         public TransactionPreparation TransactionPreparation { get; private set; }
-        public DateTime CanceledTime { get; private set; }
 
-        public TransactionPreparationCanceledEvent(TransactionPreparation transactionPreparation, DateTime canceledTime)
+        public TransactionPreparationCanceledEvent(TransactionPreparation transactionPreparation)
             : base(transactionPreparation.AccountId)
         {
             TransactionPreparation = transactionPreparation;
-            CanceledTime = canceledTime;
         }
     }
     /// <summary>余额不足，该领域事件不会改变账户的状态

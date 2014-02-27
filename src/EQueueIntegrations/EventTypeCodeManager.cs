@@ -14,7 +14,7 @@ namespace BankTransferSample.EQueueIntegrations
         public EventTypeCodeManager()
         {
             _typeCodeDict.Add(100, typeof(AccountCreatedEvent));
-            _typeCodeDict.Add(101, typeof(TransactionPreparationCreatedEvent));
+            _typeCodeDict.Add(101, typeof(TransactionPreparationAddedEvent));
             _typeCodeDict.Add(102, typeof(TransactionPreparationCommittedEvent));
             _typeCodeDict.Add(103, typeof(TransactionPreparationCanceledEvent));
             _typeCodeDict.Add(104, typeof(InsufficientBalanceEvent));

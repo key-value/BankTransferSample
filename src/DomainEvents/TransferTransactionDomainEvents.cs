@@ -7,107 +7,63 @@ namespace BankTransferSample.DomainEvents
     /// <summary>转账交易已开始
     /// </summary>
     [Serializable]
-    public class TransferTransactionStartedEvent : DomainEvent<string>
+    public abstract class AbstractTransferTransactionEvent : DomainEvent<string>
     {
         public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime StartedTime { get; private set; }
 
-        public TransferTransactionStartedEvent(TransferTransactionInfo transactionInfo, DateTime startedTime)
-            : base(transactionInfo.TransactionId)
+        public AbstractTransferTransactionEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo.TransactionId)
         {
             TransactionInfo = transactionInfo;
-            StartedTime = startedTime;
         }
+    }
+    /// <summary>转账交易已开始
+    /// </summary>
+    [Serializable]
+    public class TransferTransactionStartedEvent : AbstractTransferTransactionEvent
+    {
+        public TransferTransactionStartedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易预转出已确认
     /// </summary>
     [Serializable]
-    public class TransferOutPreparationConfirmedEvent : DomainEvent<string>
+    public class TransferOutPreparationConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferOutPreparationConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferOutPreparationConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易预转入已确认
     /// </summary>
     [Serializable]
-    public class TransferInPreparationConfirmedEvent : DomainEvent<string>
+    public class TransferInPreparationConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferInPreparationConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferInPreparationConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易转出已确认
     /// </summary>
     [Serializable]
-    public class TransferOutConfirmedEvent : DomainEvent<string>
+    public class TransferOutConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferOutConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferOutConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易转入已确认
     /// </summary>
     [Serializable]
-    public class TransferInConfirmedEvent : DomainEvent<string>
+    public class TransferInConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferInConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferInConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易已确认，表示转出账户和转入账户都已确认成功
     /// </summary>
     [Serializable]
-    public class TransferTransactionConfirmedEvent : DomainEvent<string>
+    public class TransferTransactionConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime CommittedTime { get; private set; }
-
-        public TransferTransactionConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime committedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            CommittedTime = committedTime;
-        }
+        public TransferTransactionConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易已完成
     /// </summary>
     [Serializable]
-    public class TransferTransactionCompletedEvent : DomainEvent<string>, IProcessCompletedEvent
+    public class TransferTransactionCompletedEvent : AbstractTransferTransactionEvent, IProcessCompletedEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime CompletedTime { get; private set; }
-
-        public TransferTransactionCompletedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime completedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            CompletedTime = completedTime;
-        }
+        public TransferTransactionCompletedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
 
         string IProcessCompletedEvent.ProcessId
         {
@@ -117,62 +73,32 @@ namespace BankTransferSample.DomainEvents
     /// <summary>转账交易取消已开始
     /// </summary>
     [Serializable]
-    public class TransferTransactionCancelStartedEvent : DomainEvent<string>
+    public class TransferTransactionCancelStartedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-
-        public TransferTransactionCancelStartedEvent(string transactionId, TransferTransactionInfo transactionInfo)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-        }
+        public TransferTransactionCancelStartedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易取消转出已确认
     /// </summary>
     [Serializable]
-    public class TransferOutCanceledConfirmedEvent : DomainEvent<string>
+    public class TransferOutCanceledConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferOutCanceledConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferOutCanceledConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易取消转入已确认
     /// </summary>
     [Serializable]
-    public class TransferInCanceledConfirmedEvent : DomainEvent<string>
+    public class TransferInCanceledConfirmedEvent : AbstractTransferTransactionEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime ConfirmedTime { get; private set; }
-
-        public TransferInCanceledConfirmedEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime confirmedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            ConfirmedTime = confirmedTime;
-        }
+        public TransferInCanceledConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易已取消（结束），交易已失败
     /// </summary>
     [Serializable]
-    public class TransferTransactionCanceledEvent : DomainEvent<string>, IProcessCompletedEvent
+    public class TransferTransactionCanceledEvent : AbstractTransferTransactionEvent, IProcessCompletedEvent
     {
-        public TransferTransactionInfo TransactionInfo { get; private set; }
-        public DateTime CanceledTime { get; private set; }
+        public TransferTransactionCanceledEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
 
-        public TransferTransactionCanceledEvent(string transactionId, TransferTransactionInfo transactionInfo, DateTime abortedTime)
-            : base(transactionId)
-        {
-            TransactionInfo = transactionInfo;
-            CanceledTime = abortedTime;
-        }
-
-        public string ProcessId
+        string IProcessCompletedEvent.ProcessId
         {
             get { return TransactionInfo.TransactionId.ToString(); }
         }
