@@ -4,7 +4,7 @@ using ENode.Commanding;
 
 namespace BankTransferSample.Commands
 {
-    /// <summary>开户
+    /// <summary>开户（创建一个账户）
     /// </summary>
     [Serializable]
     public class CreateAccountCommand : Command<string>, ICreatingAggregateCommand
@@ -16,17 +16,17 @@ namespace BankTransferSample.Commands
             Owner = owner;
         }
     }
-    /// <summary>创建预交易
+    /// <summary>向账户添加一笔预交易
     /// </summary>
     [Serializable]
-    public class CreateTransactionPreparationCommand : ProcessCommand<string>
+    public class AddTransactionPreparationCommand : ProcessCommand<string>
     {
         public string TransactionId { get; set; }
         public TransactionType TransactionType { get; set; }
         public PreparationType PreparationType { get; set; }
         public double Amount { get; set; }
 
-        public CreateTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
+        public AddTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
             : base(accountId, transactionId)
         {
             TransactionId = transactionId;
@@ -43,7 +43,6 @@ namespace BankTransferSample.Commands
         public string TransactionId { get; set; }
         public TransactionType TransactionType { get; set; }
         public PreparationType PreparationType { get; set; }
-        public double Amount { get; set; }
 
         public CommitTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType)
             : base(accountId, transactionId)

@@ -5,9 +5,9 @@
     public enum TransactionStatus
     {
         Started,
-        PreparationConfirmed,
+        Committed,
+        Completed,
         CancelStarted,
-        Canceled,
-        Completed
+        Canceled
     }
 }

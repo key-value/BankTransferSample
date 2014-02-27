@@ -15,7 +15,7 @@ namespace BankTransferSample.ProcessManagers
         IEventHandler<TransactionPreparationAddedEvent>,                 //账户预交易已添加
         IEventHandler<TransactionPreparationCommittedEvent>,             //账户预交易已提交
         IEventHandler<TransactionPreparationCanceledEvent>,              //账户预交易已取消
-        IEventHandler<TransferTransactionConfirmedEvent>,                //转账交易已确认
+        IEventHandler<TransferTransactionCommittedEvent>,                //转账交易已提交
         IEventHandler<TransferTransactionCancelStartedEvent>,            //转账交易取消已开始
         IEventHandler<InsufficientBalanceEvent>                          //账户余额不足
     {
@@ -84,7 +84,7 @@ namespace BankTransferSample.ProcessManagers
                 }
             }
         }
-        public void Handle(TransferTransactionConfirmedEvent evnt)
+        public void Handle(TransferTransactionCommittedEvent evnt)
         {
             _commandService.Send(new CommitTransactionPreparationCommand(
                 evnt.TransactionInfo.SourceAccountId,

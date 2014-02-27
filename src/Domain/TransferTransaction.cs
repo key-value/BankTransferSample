@@ -67,7 +67,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferOutPreparationConfirmedEvent(TransactionInfo));
                     if (IsTransferInPreparationConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionConfirmedEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCommittedEvent(TransactionInfo));
                     }
                 }
             }
@@ -83,7 +83,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferInPreparationConfirmedEvent(TransactionInfo));
                     if (IsTransferOutPreparationConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionConfirmedEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCommittedEvent(TransactionInfo));
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace BankTransferSample.Domain
         /// </summary>
         public void ConfirmTransferOut()
         {
-            if (Status == TransactionStatus.PreparationConfirmed)
+            if (Status == TransactionStatus.Committed)
             {
                 if (!IsTransferOutConfirmed)
                 {
@@ -108,7 +108,7 @@ namespace BankTransferSample.Domain
         /// </summary>
         public void ConfirmTransferIn()
         {
-            if (Status == TransactionStatus.PreparationConfirmed)
+            if (Status == TransactionStatus.Committed)
             {
                 if (!IsTransferInConfirmed)
                 {
@@ -120,7 +120,7 @@ namespace BankTransferSample.Domain
                 }
             }
         }
-        /// <summary>开始取消转账交易
+        /// <summary>开始取消转账交易，只有未提交状态的交易才能取消
         /// </summary>
         public void StartCancel()
         {
@@ -133,12 +133,15 @@ namespace BankTransferSample.Domain
         /// </summary>
         public void ConfirmTransferOutCanceled()
         {
-            if (!IsCancelTransferOutConfirmed)
+            if (Status == TransactionStatus.CancelStarted)
             {
-                RaiseEvent(new TransferOutCanceledConfirmedEvent(TransactionInfo));
-                if (IsCancelTransferInConfirmed)
+                if (!IsCancelTransferOutConfirmed)
                 {
-                    RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                    RaiseEvent(new TransferOutCanceledConfirmedEvent(TransactionInfo));
+                    if (IsCancelTransferInConfirmed)
+                    {
+                        RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                    }
                 }
             }
         }
@@ -146,12 +149,15 @@ namespace BankTransferSample.Domain
         /// </summary>
         public void ConfirmTransferInCanceled()
         {
-            if (!IsCancelTransferInConfirmed)
+            if (Status == TransactionStatus.CancelStarted)
             {
-                RaiseEvent(new TransferInCanceledConfirmedEvent(TransactionInfo));
-                if (IsCancelTransferOutConfirmed)
+                if (!IsCancelTransferInConfirmed)
                 {
-                    RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                    RaiseEvent(new TransferInCanceledConfirmedEvent(TransactionInfo));
+                    if (IsCancelTransferOutConfirmed)
+                    {
+                        RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                    }
                 }
             }
         }
@@ -174,6 +180,10 @@ namespace BankTransferSample.Domain
         {
             IsTransferInPreparationConfirmed = true;
         }
+        private void Handle(TransferTransactionCommittedEvent evnt)
+        {
+            Status = TransactionStatus.Committed;
+        }
         private void Handle(TransferOutConfirmedEvent evnt)
         {
             IsTransferOutConfirmed = true;
@@ -181,10 +191,6 @@ namespace BankTransferSample.Domain
         private void Handle(TransferInConfirmedEvent evnt)
         {
             IsTransferInConfirmed = true;
-        }
-        private void Handle(TransferTransactionConfirmedEvent evnt)
-        {
-            Status = TransactionStatus.PreparationConfirmed;
         }
         private void Handle(TransferTransactionCompletedEvent evnt)
         {

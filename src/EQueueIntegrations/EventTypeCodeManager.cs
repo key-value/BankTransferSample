@@ -20,7 +20,7 @@ namespace BankTransferSample.EQueueIntegrations
             _typeCodeDict.Add(104, typeof(InsufficientBalanceEvent));
 
             _typeCodeDict.Add(201, typeof(DepositTransactionStartedEvent));
-            _typeCodeDict.Add(202, typeof(DepositPreparationConfirmedEvent));
+            _typeCodeDict.Add(202, typeof(DepositTransactionCommittedEvent));
             _typeCodeDict.Add(203, typeof(DepositTransactionCompletedEvent));
 
             _typeCodeDict.Add(301, typeof(TransferTransactionStartedEvent));
@@ -28,7 +28,7 @@ namespace BankTransferSample.EQueueIntegrations
             _typeCodeDict.Add(303, typeof(TransferInPreparationConfirmedEvent));
             _typeCodeDict.Add(304, typeof(TransferOutConfirmedEvent));
             _typeCodeDict.Add(305, typeof(TransferInConfirmedEvent));
-            _typeCodeDict.Add(306, typeof(TransferTransactionConfirmedEvent));
+            _typeCodeDict.Add(306, typeof(TransferTransactionCommittedEvent));
             _typeCodeDict.Add(307, typeof(TransferTransactionCompletedEvent));
             _typeCodeDict.Add(308, typeof(TransferTransactionCancelStartedEvent));
             _typeCodeDict.Add(309, typeof(TransferOutCanceledConfirmedEvent));

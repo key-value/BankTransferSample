@@ -37,6 +37,13 @@ namespace BankTransferSample.DomainEvents
     {
         public TransferInPreparationConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
+    /// <summary>转账交易已提交
+    /// </summary>
+    [Serializable]
+    public class TransferTransactionCommittedEvent : AbstractTransferTransactionEvent
+    {
+        public TransferTransactionCommittedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
+    }
     /// <summary>转账交易转出已确认
     /// </summary>
     [Serializable]
@@ -50,13 +57,6 @@ namespace BankTransferSample.DomainEvents
     public class TransferInConfirmedEvent : AbstractTransferTransactionEvent
     {
         public TransferInConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
-    }
-    /// <summary>转账交易已确认，表示转出账户和转入账户都已确认成功
-    /// </summary>
-    [Serializable]
-    public class TransferTransactionConfirmedEvent : AbstractTransferTransactionEvent
-    {
-        public TransferTransactionConfirmedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
     }
     /// <summary>转账交易已完成
     /// </summary>

@@ -80,6 +80,7 @@ namespace BankTransferSample
         IEventHandler<TransferTransactionStartedEvent>,
         IEventHandler<TransferOutPreparationConfirmedEvent>,
         IEventHandler<TransferInPreparationConfirmedEvent>,
+        IEventHandler<TransferTransactionCommittedEvent>,
         IEventHandler<TransferTransactionCompletedEvent>
     {
         public void Handle(AccountCreatedEvent evnt)
@@ -128,11 +129,15 @@ namespace BankTransferSample
         }
         public void Handle(TransferOutPreparationConfirmedEvent evnt)
         {
-            Console.WriteLine("预转出确认成功，交易ID：{0}", evnt.AggregateRootId);
+            Console.WriteLine("预转出确认成功，交易ID：{0}，账户：{1}", evnt.AggregateRootId, evnt.TransactionInfo.SourceAccountId);
         }
         public void Handle(TransferInPreparationConfirmedEvent evnt)
         {
-            Console.WriteLine("预转入确认成功，交易ID：{0}", evnt.AggregateRootId);
+            Console.WriteLine("预转入确认成功，交易ID：{0}，账户：{1}", evnt.AggregateRootId, evnt.TransactionInfo.TargetAccountId);
+        }
+        public void Handle(TransferTransactionCommittedEvent evnt)
+        {
+            Console.WriteLine("转账交易已提交，交易ID：{0}", evnt.AggregateRootId);
         }
         public void Handle(TransferTransactionCompletedEvent evnt)
         {

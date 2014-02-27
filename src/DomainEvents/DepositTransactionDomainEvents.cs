@@ -19,14 +19,14 @@ namespace BankTransferSample.DomainEvents
             Amount = amount;
         }
     }
-    /// <summary>存款交易预存款已确认
+    /// <summary>存款交易已提交
     /// </summary>
     [Serializable]
-    public class DepositPreparationConfirmedEvent : DomainEvent<string>
+    public class DepositTransactionCommittedEvent : DomainEvent<string>
     {
         public string AccountId { get; private set; }
 
-        public DepositPreparationConfirmedEvent(string transactionId, string accountId)
+        public DepositTransactionCommittedEvent(string transactionId, string accountId)
             : base(transactionId)
         {
             AccountId = accountId;

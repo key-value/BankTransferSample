@@ -7,12 +7,12 @@ using ENode.Eventing;
 
 namespace BankTransferSample.ProcessManagers
 {
-    /// <summary>银行存款交易流程管理器，用于协调银行转账交易流程中各个参与者聚合根之间的消息交互。
+    /// <summary>银行存款交易流程管理器，用于协调银行存款交易流程中各个参与者聚合根之间的消息交互。
     /// </summary>
     [Component]
     public class DepositTransactionProcessManager :
         IEventHandler<DepositTransactionStartedEvent>,                    //存款交易已开始
-        IEventHandler<DepositPreparationConfirmedEvent>,                  //存款交易预存款已确认
+        IEventHandler<DepositTransactionCommittedEvent>,                  //存款交易已提交
         IEventHandler<TransactionPreparationAddedEvent>,                  //账户预交易已添加
         IEventHandler<TransactionPreparationCommittedEvent>               //账户预交易已提交
     {
@@ -34,15 +34,13 @@ namespace BankTransferSample.ProcessManagers
         }
         public void Handle(TransactionPreparationAddedEvent evnt)
         {
-            if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction)
+            if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction &&
+                evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
             {
-                if (evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
-                {
-                    _commandService.Send(new ConfirmDepositPreparationCommand(evnt.TransactionPreparation.TransactionId));
-                }
+                _commandService.Send(new ConfirmDepositPreparationCommand(evnt.TransactionPreparation.TransactionId));
             }
         }
-        public void Handle(DepositPreparationConfirmedEvent evnt)
+        public void Handle(DepositTransactionCommittedEvent evnt)
         {
             _commandService.Send(new CommitTransactionPreparationCommand(
                 evnt.AccountId,
@@ -52,12 +50,10 @@ namespace BankTransferSample.ProcessManagers
         }
         public void Handle(TransactionPreparationCommittedEvent evnt)
         {
-            if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction)
+            if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction &&
+                evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
             {
-                if (evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
-                {
-                    _commandService.Send(new ConfirmDepositCommand(evnt.TransactionPreparation.TransactionId));
-                }
+                _commandService.Send(new ConfirmDepositCommand(evnt.TransactionPreparation.TransactionId));
             }
         }
     }

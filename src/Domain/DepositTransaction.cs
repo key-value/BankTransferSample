@@ -21,9 +21,6 @@ namespace BankTransferSample.Domain
         /// <summary>交易开始时间
         /// </summary>
         public DateTime StartedTime { get; private set; }
-        /// <summary>预存款已确认
-        /// </summary>
-        public bool IsDepositPreparationConfirmed { get; private set; }
         /// <summary>交易状态
         /// </summary>
         public TransactionStatus Status { get; private set; }
@@ -34,8 +31,6 @@ namespace BankTransferSample.Domain
 
         /// <summary>构造函数
         /// </summary>
-        /// <param name="accountId"></param>
-        /// <param name="amount"></param>
         public DepositTransaction(string transactionId, string accountId, double amount)
             : base(transactionId)
         {
@@ -50,16 +45,16 @@ namespace BankTransferSample.Domain
         /// </summary>
         public void ConfirmDepositPreparation()
         {
-            if (!IsDepositPreparationConfirmed)
+            if (Status == TransactionStatus.Started)
             {
-                RaiseEvent(new DepositPreparationConfirmedEvent(Id, AccountId));
+                RaiseEvent(new DepositTransactionCommittedEvent(Id, AccountId));
             }
         }
         /// <summary>确认存款
         /// </summary>
         public void ConfirmDeposit()
         {
-            if (Status != TransactionStatus.Completed)
+            if (Status == TransactionStatus.Committed)
             {
                 RaiseEvent(new DepositTransactionCompletedEvent(Id, AccountId));
             }
@@ -76,9 +71,9 @@ namespace BankTransferSample.Domain
             Amount = evnt.Amount;
             Status = TransactionStatus.Started;
         }
-        private void Handle(DepositPreparationConfirmedEvent evnt)
+        private void Handle(DepositTransactionCommittedEvent evnt)
         {
-            IsDepositPreparationConfirmed = true;
+            Status = TransactionStatus.Committed;
         }
         private void Handle(DepositTransactionCompletedEvent evnt)
         {

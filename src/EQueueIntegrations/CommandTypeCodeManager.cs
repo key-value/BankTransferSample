@@ -14,7 +14,7 @@ namespace BankTransferSample.EQueueIntegrations
         public CommandTypeCodeManager()
         {
             _typeCodeDict.Add(100, typeof(CreateAccountCommand));
-            _typeCodeDict.Add(101, typeof(CreateTransactionPreparationCommand));
+            _typeCodeDict.Add(101, typeof(AddTransactionPreparationCommand));
             _typeCodeDict.Add(102, typeof(CommitTransactionPreparationCommand));
             _typeCodeDict.Add(103, typeof(CancelTransactionPreparationCommand));
 
