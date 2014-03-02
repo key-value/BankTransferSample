@@ -63,10 +63,13 @@ namespace BankTransferSample
                 .CreateENode()
                 .RegisterENodeComponents()
                 .RegisterBusinessComponents(assemblies)
+                .SetEventTypeCodeProvider()
                 .UseEQueue()
-                .InitializeENode(assemblies)
-                .StartEQueue()
-                .StartEnode();
+                .InitializeEventStore()
+                .InitializeBusinessAssemblies(assemblies)
+                .StartRetryCommandService()
+                .StartWaitingCommandService()
+                .StartEQueue();
         }
     }
 

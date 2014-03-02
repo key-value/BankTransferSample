@@ -37,32 +37,33 @@
     <Reference Include="Autofac">
       <HintPath>packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="ECommon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ECommon, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ecommon.1.0.6\lib\net40\ECommon.dll</HintPath>
+      <HintPath>packages\ecommon.1.0.7\lib\net40\ECommon.dll</HintPath>
     </Reference>
-    <Reference Include="ECommon.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ECommon.Autofac, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ecommon.autofac.1.0.6\lib\net40\ECommon.Autofac.dll</HintPath>
+      <HintPath>packages\ecommon.autofac.1.0.7\lib\net40\ECommon.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="ECommon.JsonNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ECommon.JsonNet, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ecommon.jsonnet.1.0.6\lib\net40\ECommon.JsonNet.dll</HintPath>
+      <HintPath>packages\ecommon.jsonnet.1.0.7\lib\net40\ECommon.JsonNet.dll</HintPath>
     </Reference>
-    <Reference Include="ECommon.Log4Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ECommon.Log4Net, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ecommon.log4net.1.0.6\lib\net40\ECommon.Log4Net.dll</HintPath>
+      <HintPath>packages\ecommon.log4net.1.0.7\lib\net40\ECommon.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="ENode, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ENode, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\enode.2.1.0\lib\net40\ENode.dll</HintPath>
+      <HintPath>packages\enode.2.1.1\lib\net40\ENode.dll</HintPath>
     </Reference>
-    <Reference Include="ENode.EQueue">
-      <HintPath>packages\enode.equeue.1.1.1\lib\net40\ENode.EQueue.dll</HintPath>
-    </Reference>
-    <Reference Include="EQueue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ENode.EQueue, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\equeue.1.0.4\lib\net40\EQueue.dll</HintPath>
+      <HintPath>packages\enode.equeue.1.1.2\lib\net40\ENode.EQueue.dll</HintPath>
+    </Reference>
+    <Reference Include="EQueue, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\equeue.1.0.5\lib\net40\EQueue.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -87,6 +88,7 @@
     <Compile Include="DomainEvents\TransferTransactionDomainEvents.cs" />
     <Compile Include="Domain\BankAccount.cs" />
     <Compile Include="Domain\DepositTransaction.cs" />
+    <Compile Include="EventTypeCodeManager.cs" />
     <Compile Include="Exceptions\ExceptionCode.cs" />
     <Compile Include="Domain\TransactionPreparation.cs" />
     <Compile Include="Domain\PreparationType.cs" />
@@ -94,11 +96,10 @@
     <Compile Include="Domain\TransferTransaction.cs" />
     <Compile Include="Domain\TransactionStatus.cs" />
     <Compile Include="Domain\TransferTransactionInfo.cs" />
-    <Compile Include="EQueueIntegrations\EQueueIntegration.cs" />
+    <Compile Include="ENodeExtensions.cs" />
     <Compile Include="EQueueIntegrations\CommandTopicManager.cs" />
     <Compile Include="EQueueIntegrations\CommandTypeCodeManager.cs" />
     <Compile Include="EQueueIntegrations\EventTopicManager.cs" />
-    <Compile Include="EQueueIntegrations\EventTypeCodeManager.cs" />
     <Compile Include="Exceptions\TransactionPreparationNotExistException.cs" />
     <Compile Include="Exceptions\MismatchTransactionPreparationException.cs" />
     <Compile Include="ProcessManagers\DepositTransactionProcessManager.cs" />

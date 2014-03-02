@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
+using BankTransferSample.EQueueIntegrations;
 using ECommon.IoC;
 using ECommon.Scheduling;
 using ECommon.Utilities;
@@ -12,9 +13,9 @@ using EQueue.Broker;
 using EQueue.Clients.Consumers;
 using EQueue.Configurations;
 
-namespace BankTransferSample.EQueueIntegrations
+namespace BankTransferSample
 {
-    public static class EQueueIntegration
+    public static class ENodeExtensions
     {
         private static BrokerController _broker;
         private static CommandService _commandService;
@@ -25,6 +26,12 @@ namespace BankTransferSample.EQueueIntegrations
         private static CommandExecutedMessageSender _commandExecutedMessageSender;
         private static CommandResultProcessor _commandResultProcessor;
 
+        public static ENodeConfiguration SetEventTypeCodeProvider(this ENodeConfiguration enodeConfiguration)
+        {
+            var configuration = enodeConfiguration.GetCommonConfiguration();
+            configuration.SetDefault<IEventTypeCodeProvider, EventTypeCodeManager>();
+            return enodeConfiguration;
+        }
         public static ENodeConfiguration UseEQueue(this ENodeConfiguration enodeConfiguration)
         {
             var configuration = enodeConfiguration.GetCommonConfiguration();
@@ -33,7 +40,6 @@ namespace BankTransferSample.EQueueIntegrations
             configuration.SetDefault<ICommandTopicProvider, CommandTopicManager>();
             configuration.SetDefault<IEventTopicProvider, EventTopicManager>();
             configuration.SetDefault<ICommandTypeCodeProvider, CommandTypeCodeManager>();
-            configuration.SetDefault<IEventTypeCodeProvider, EventTypeCodeManager>();
 
             var consumerSetting = new ConsumerSetting
             {

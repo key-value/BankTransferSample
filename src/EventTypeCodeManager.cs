@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using BankTransferSample.DomainEvents;
-using ENode.EQueue;
 using ENode.Eventing;
 
-namespace BankTransferSample.EQueueIntegrations
+namespace BankTransferSample
 {
     public class EventTypeCodeManager : IEventTypeCodeProvider
     {
