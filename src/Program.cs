@@ -3,7 +3,6 @@ using System.Reflection;
 using BankTransferSample.Commands;
 using BankTransferSample.Domain;
 using BankTransferSample.DomainEvents;
-using BankTransferSample.EQueueIntegrations;
 using ECommon.Autofac;
 using ECommon.Configurations;
 using ECommon.IoC;

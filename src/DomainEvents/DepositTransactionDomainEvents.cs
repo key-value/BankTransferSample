@@ -4,7 +4,7 @@ using ENode.Eventing;
 
 namespace BankTransferSample.DomainEvents
 {
-    /// <summary>转账交易已开始
+    /// <summary>存款交易已开始
     /// </summary>
     [Serializable]
     public class DepositTransactionStartedEvent : DomainEvent<string>
