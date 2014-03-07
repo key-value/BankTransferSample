@@ -55,11 +55,11 @@
     </Reference>
     <Reference Include="ENode, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\enode.2.1.1\lib\net40\ENode.dll</HintPath>
+      <HintPath>packages\enode.2.1.2\lib\net40\ENode.dll</HintPath>
     </Reference>
     <Reference Include="ENode.EQueue, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\enode.equeue.1.1.2\lib\net40\ENode.EQueue.dll</HintPath>
+      <HintPath>packages\enode.equeue.1.1.3\lib\net40\ENode.EQueue.dll</HintPath>
     </Reference>
     <Reference Include="EQueue, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -88,7 +88,10 @@
     <Compile Include="DomainEvents\TransferTransactionDomainEvents.cs" />
     <Compile Include="Domain\BankAccount.cs" />
     <Compile Include="Domain\DepositTransaction.cs" />
-    <Compile Include="EventTypeCodeManager.cs" />
+    <Compile Include="EventHandlers\ConsoleLogger.cs" />
+    <Compile Include="Providers\AggregateRootTypeCodeProvider.cs" />
+    <Compile Include="Providers\EventHandlerTypeCodeProvider.cs" />
+    <Compile Include="Providers\EventTypeCodeProvider.cs" />
     <Compile Include="Exceptions\ExceptionCode.cs" />
     <Compile Include="Domain\TransactionPreparation.cs" />
     <Compile Include="Domain\PreparationType.cs" />
@@ -97,9 +100,9 @@
     <Compile Include="Domain\TransactionStatus.cs" />
     <Compile Include="Domain\TransferTransactionInfo.cs" />
     <Compile Include="ENodeExtensions.cs" />
-    <Compile Include="EQueueIntegrations\CommandTopicManager.cs" />
-    <Compile Include="EQueueIntegrations\CommandTypeCodeManager.cs" />
-    <Compile Include="EQueueIntegrations\EventTopicManager.cs" />
+    <Compile Include="Providers\CommandTopicProvider.cs" />
+    <Compile Include="Providers\CommandTypeCodeProvider.cs" />
+    <Compile Include="Providers\EventTopicProvider.cs" />
     <Compile Include="Exceptions\TransactionPreparationNotExistException.cs" />
     <Compile Include="Exceptions\MismatchTransactionPreparationException.cs" />
     <Compile Include="ProcessManagers\DepositTransactionProcessManager.cs" />

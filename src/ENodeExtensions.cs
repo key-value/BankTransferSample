@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
-using BankTransferSample.EQueueIntegrations;
+using BankTransferSample.Providers;
 using ECommon.IoC;
 using ECommon.Scheduling;
 using ECommon.Utilities;
 using ENode.Commanding;
 using ENode.Configurations;
+using ENode.Domain;
 using ENode.EQueue;
 using ENode.EQueue.Commanding;
 using ENode.Eventing;
@@ -26,10 +27,15 @@ namespace BankTransferSample
         private static CommandExecutedMessageSender _commandExecutedMessageSender;
         private static CommandResultProcessor _commandResultProcessor;
 
-        public static ENodeConfiguration SetEventTypeCodeProvider(this ENodeConfiguration enodeConfiguration)
+        public static ENodeConfiguration SetProviders(this ENodeConfiguration enodeConfiguration)
         {
             var configuration = enodeConfiguration.GetCommonConfiguration();
-            configuration.SetDefault<IEventTypeCodeProvider, EventTypeCodeManager>();
+            configuration.SetDefault<ICommandTopicProvider, CommandTopicProvider>();
+            configuration.SetDefault<IEventTopicProvider, EventTopicProvider>();
+            configuration.SetDefault<ICommandTypeCodeProvider, CommandTypeCodeProvider>();
+            configuration.SetDefault<IAggregateRootTypeCodeProvider, AggregateRootTypeCodeProvider>();
+            configuration.SetDefault<IEventTypeCodeProvider, EventTypeCodeProvider>();
+            configuration.SetDefault<IEventHandlerTypeCodeProvider, EventHandlerTypeCodeProvider>();
             return enodeConfiguration;
         }
         public static ENodeConfiguration UseEQueue(this ENodeConfiguration enodeConfiguration)
@@ -37,9 +43,6 @@ namespace BankTransferSample
             var configuration = enodeConfiguration.GetCommonConfiguration();
 
             configuration.RegisterEQueueComponents();
-            configuration.SetDefault<ICommandTopicProvider, CommandTopicManager>();
-            configuration.SetDefault<IEventTopicProvider, EventTopicManager>();
-            configuration.SetDefault<ICommandTypeCodeProvider, CommandTypeCodeManager>();
 
             var consumerSetting = new ConsumerSetting
             {

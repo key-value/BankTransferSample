@@ -1,9 +1,9 @@
 ﻿using ENode.Commanding;
 using ENode.EQueue;
 
-namespace BankTransferSample.EQueueIntegrations
+namespace BankTransferSample.Providers
 {
-    public class CommandTopicManager : ICommandTopicProvider
+    public class CommandTopicProvider : ICommandTopicProvider
     {
         public string GetTopic(ICommand command)
         {
