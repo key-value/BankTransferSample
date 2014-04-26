@@ -16,7 +16,7 @@ namespace BankTransferSample.Commands
         public double Amount { get; private set; }
 
         public StartDepositTransactionCommand(string transactionId, string accountId, double amount)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
             AccountId = accountId;
             Amount = amount;
@@ -28,7 +28,7 @@ namespace BankTransferSample.Commands
     public class ConfirmDepositPreparationCommand : ProcessCommand<string>
     {
         public ConfirmDepositPreparationCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -38,7 +38,7 @@ namespace BankTransferSample.Commands
     public class ConfirmDepositCommand : ProcessCommand<string>
     {
         public ConfirmDepositCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }

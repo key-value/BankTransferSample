@@ -27,7 +27,7 @@ namespace BankTransferSample.Commands
         public double Amount { get; set; }
 
         public AddTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType, double amount)
-            : base(accountId, transactionId)
+            : base(transactionId, accountId)
         {
             TransactionId = transactionId;
             TransactionType = transactionType;
@@ -45,7 +45,7 @@ namespace BankTransferSample.Commands
         public PreparationType PreparationType { get; set; }
 
         public CommitTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType)
-            : base(accountId, transactionId)
+            : base(transactionId, accountId)
         {
             TransactionId = transactionId;
             TransactionType = transactionType;
@@ -62,7 +62,7 @@ namespace BankTransferSample.Commands
         public PreparationType PreparationType { get; set; }
 
         public CancelTransactionPreparationCommand(string accountId, string transactionId, TransactionType transactionType, PreparationType preparationType)
-            : base(accountId, transactionId)
+            : base(transactionId, accountId)
         {
             TransactionId = transactionId;
             TransactionType = transactionType;

@@ -12,7 +12,7 @@ namespace BankTransferSample.Commands
         public TransferTransactionInfo TransactionInfo { get; private set; }
 
         public StartTransferTransactionCommand(TransferTransactionInfo transactionInfo)
-            : base(transactionInfo.TransactionId)
+            : base(transactionInfo.TransactionId, transactionInfo.TransactionId)
         {
             TransactionInfo = transactionInfo;
         }
@@ -23,7 +23,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferOutPreparationCommand : ProcessCommand<string>
     {
         public ConfirmTransferOutPreparationCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -33,7 +33,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferInPreparationCommand : ProcessCommand<string>
     {
         public ConfirmTransferInPreparationCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -43,7 +43,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferOutCommand : ProcessCommand<string>
     {
         public ConfirmTransferOutCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -53,7 +53,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferInCommand : ProcessCommand<string>
     {
         public ConfirmTransferInCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -63,7 +63,7 @@ namespace BankTransferSample.Commands
     public class StartCancelTransferTransactionCommand : ProcessCommand<string>
     {
         public StartCancelTransferTransactionCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -73,7 +73,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferOutCanceledCommand : ProcessCommand<string>
     {
         public ConfirmTransferOutCanceledCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
@@ -83,7 +83,7 @@ namespace BankTransferSample.Commands
     public class ConfirmTransferInCanceledCommand : ProcessCommand<string>
     {
         public ConfirmTransferInCanceledCommand(string transactionId)
-            : base(transactionId)
+            : base(transactionId, transactionId)
         {
         }
     }
