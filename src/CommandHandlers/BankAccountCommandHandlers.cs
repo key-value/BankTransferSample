@@ -1,6 +1,6 @@
 ﻿using BankTransferSample.Commands;
 using BankTransferSample.Domain;
-using ECommon.IoC;
+using ECommon.Components;
 using ENode.Commanding;
 
 namespace BankTransferSample.CommandHandlers

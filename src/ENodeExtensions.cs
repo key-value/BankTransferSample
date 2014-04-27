@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using BankTransferSample.Providers;
-using ECommon.IoC;
+using ECommon.Components;
 using ECommon.Scheduling;
 using ECommon.Utilities;
 using ENode.Commanding;
