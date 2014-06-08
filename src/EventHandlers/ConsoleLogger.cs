@@ -17,11 +17,11 @@ namespace BankTransferSample.EventHandlers
         IEventHandler<TransferTransactionCommittedEvent>,
         IEventHandler<TransferTransactionCompletedEvent>
     {
-        public void Handle(AccountCreatedEvent evnt)
+        public void Handle(IEventContext context, AccountCreatedEvent evnt)
         {
             Console.WriteLine("账户已创建，账户：{0}，所有者：{1}", evnt.AggregateRootId, evnt.Owner);
         }
-        public void Handle(TransactionPreparationAddedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {
@@ -35,7 +35,7 @@ namespace BankTransferSample.EventHandlers
                 }
             }
         }
-        public void Handle(TransactionPreparationCommittedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationCommittedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction)
             {
@@ -57,23 +57,23 @@ namespace BankTransferSample.EventHandlers
             }
         }
 
-        public void Handle(TransferTransactionStartedEvent evnt)
+        public void Handle(IEventContext context, TransferTransactionStartedEvent evnt)
         {
             Console.WriteLine("转账交易已开始，交易ID：{0}，源账户：{1}，目标账户：{2}，转账金额：{3}", evnt.AggregateRootId, evnt.TransactionInfo.SourceAccountId, evnt.TransactionInfo.TargetAccountId, evnt.TransactionInfo.Amount);
         }
-        public void Handle(TransferOutPreparationConfirmedEvent evnt)
+        public void Handle(IEventContext context, TransferOutPreparationConfirmedEvent evnt)
         {
             Console.WriteLine("预转出确认成功，交易ID：{0}，账户：{1}", evnt.AggregateRootId, evnt.TransactionInfo.SourceAccountId);
         }
-        public void Handle(TransferInPreparationConfirmedEvent evnt)
+        public void Handle(IEventContext context, TransferInPreparationConfirmedEvent evnt)
         {
             Console.WriteLine("预转入确认成功，交易ID：{0}，账户：{1}", evnt.AggregateRootId, evnt.TransactionInfo.TargetAccountId);
         }
-        public void Handle(TransferTransactionCommittedEvent evnt)
+        public void Handle(IEventContext context, TransferTransactionCommittedEvent evnt)
         {
             Console.WriteLine("转账交易已提交，交易ID：{0}", evnt.AggregateRootId);
         }
-        public void Handle(TransferTransactionCompletedEvent evnt)
+        public void Handle(IEventContext context, TransferTransactionCompletedEvent evnt)
         {
             Console.WriteLine("转账交易已完成，交易ID：{0}", evnt.AggregateRootId);
         }

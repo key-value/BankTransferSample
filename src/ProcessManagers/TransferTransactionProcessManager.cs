@@ -19,104 +19,97 @@ namespace BankTransferSample.ProcessManagers
         IEventHandler<TransferTransactionCancelStartedEvent>,            //转账交易取消已开始
         IEventHandler<InsufficientBalanceEvent>                          //账户余额不足
     {
-        private readonly ICommandService _commandService;
-
-        public TransferTransactionProcessManager(ICommandService commandService)
+        public void Handle(IEventContext context, TransferTransactionStartedEvent evnt)
         {
-            _commandService = commandService;
-        }
-
-        public void Handle(TransferTransactionStartedEvent evnt)
-        {
-            _commandService.Send(new AddTransactionPreparationCommand(
+            context.AddCommand(new AddTransactionPreparationCommand(
                 evnt.TransactionInfo.SourceAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.DebitPreparation,
                 evnt.TransactionInfo.Amount));
 
-            _commandService.Send(new AddTransactionPreparationCommand(
+            context.AddCommand(new AddTransactionPreparationCommand(
                 evnt.TransactionInfo.TargetAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.CreditPreparation,
                 evnt.TransactionInfo.Amount));
         }
-        public void Handle(TransactionPreparationAddedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {
                 if (evnt.TransactionPreparation.PreparationType == PreparationType.DebitPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferOutPreparationCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferOutPreparationCommand(evnt.TransactionPreparation.TransactionId));
                 }
                 else if (evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferInPreparationCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferInPreparationCommand(evnt.TransactionPreparation.TransactionId));
                 }
             }
         }
-        public void Handle(TransactionPreparationCommittedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationCommittedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {
                 if (evnt.TransactionPreparation.PreparationType == PreparationType.DebitPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferOutCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferOutCommand(evnt.TransactionPreparation.TransactionId));
                 }
                 else if (evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferInCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferInCommand(evnt.TransactionPreparation.TransactionId));
                 }
             }
         }
-        public void Handle(TransactionPreparationCanceledEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationCanceledEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.TransferTransaction)
             {
                 if (evnt.TransactionPreparation.PreparationType == PreparationType.DebitPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferOutCanceledCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferOutCanceledCommand(evnt.TransactionPreparation.TransactionId));
                 }
                 else if (evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
                 {
-                    _commandService.Send(new ConfirmTransferInCanceledCommand(evnt.TransactionPreparation.TransactionId));
+                    context.AddCommand(new ConfirmTransferInCanceledCommand(evnt.TransactionPreparation.TransactionId));
                 }
             }
         }
-        public void Handle(TransferTransactionCommittedEvent evnt)
+        public void Handle(IEventContext context, TransferTransactionCommittedEvent evnt)
         {
-            _commandService.Send(new CommitTransactionPreparationCommand(
+            context.AddCommand(new CommitTransactionPreparationCommand(
                 evnt.TransactionInfo.SourceAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.DebitPreparation));
 
-            _commandService.Send(new CommitTransactionPreparationCommand(
+            context.AddCommand(new CommitTransactionPreparationCommand(
                 evnt.TransactionInfo.TargetAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.CreditPreparation));
         }
-        public void Handle(TransferTransactionCancelStartedEvent evnt)
+        public void Handle(IEventContext context, TransferTransactionCancelStartedEvent evnt)
         {
-            _commandService.Send(new CancelTransactionPreparationCommand(
+            context.AddCommand(new CancelTransactionPreparationCommand(
                 evnt.TransactionInfo.SourceAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.DebitPreparation));
 
-            _commandService.Send(new CancelTransactionPreparationCommand(
+            context.AddCommand(new CancelTransactionPreparationCommand(
                 evnt.TransactionInfo.TargetAccountId,
                 evnt.TransactionInfo.TransactionId,
                 TransactionType.TransferTransaction,
                 PreparationType.CreditPreparation));
         }
-        public void Handle(InsufficientBalanceEvent evnt)
+        public void Handle(IEventContext context, InsufficientBalanceEvent evnt)
         {
             if (evnt.TransactionType == TransactionType.TransferTransaction)
             {
-                _commandService.Send(new StartCancelTransferTransactionCommand(evnt.TransactionId));
+                context.AddCommand(new StartCancelTransferTransactionCommand(evnt.TransactionId));
             }
         }
     }

@@ -16,44 +16,37 @@ namespace BankTransferSample.ProcessManagers
         IEventHandler<TransactionPreparationAddedEvent>,                  //账户预交易已添加
         IEventHandler<TransactionPreparationCommittedEvent>               //账户预交易已提交
     {
-        private readonly ICommandService _commandService;
-
-        public DepositTransactionProcessManager(ICommandService commandService)
+        public void Handle(IEventContext context, DepositTransactionStartedEvent evnt)
         {
-            _commandService = commandService;
-        }
-
-        public void Handle(DepositTransactionStartedEvent evnt)
-        {
-            _commandService.Send(new AddTransactionPreparationCommand(
+            context.AddCommand(new AddTransactionPreparationCommand(
                 evnt.AccountId,
                 evnt.AggregateRootId,
                 TransactionType.DepositTransaction,
                 PreparationType.CreditPreparation,
                 evnt.Amount));
         }
-        public void Handle(TransactionPreparationAddedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationAddedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction &&
                 evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
             {
-                _commandService.Send(new ConfirmDepositPreparationCommand(evnt.TransactionPreparation.TransactionId));
+                context.AddCommand(new ConfirmDepositPreparationCommand(evnt.TransactionPreparation.TransactionId));
             }
         }
-        public void Handle(DepositTransactionCommittedEvent evnt)
+        public void Handle(IEventContext context, DepositTransactionCommittedEvent evnt)
         {
-            _commandService.Send(new CommitTransactionPreparationCommand(
+            context.AddCommand(new CommitTransactionPreparationCommand(
                 evnt.AccountId,
                 evnt.AggregateRootId,
                 TransactionType.DepositTransaction,
                 PreparationType.CreditPreparation));
         }
-        public void Handle(TransactionPreparationCommittedEvent evnt)
+        public void Handle(IEventContext context, TransactionPreparationCommittedEvent evnt)
         {
             if (evnt.TransactionPreparation.TransactionType == TransactionType.DepositTransaction &&
                 evnt.TransactionPreparation.PreparationType == PreparationType.CreditPreparation)
             {
-                _commandService.Send(new ConfirmDepositCommand(evnt.TransactionPreparation.TransactionId));
+                context.AddCommand(new ConfirmDepositCommand(evnt.TransactionPreparation.TransactionId));
             }
         }
     }
