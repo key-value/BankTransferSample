@@ -1,6 +1,5 @@
 ﻿using System;
 using BankTransferSample.DomainEvents;
-using ECommon.Utilities;
 using ENode.Domain;
 
 namespace BankTransferSample.Domain
