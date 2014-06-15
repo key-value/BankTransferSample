@@ -58,7 +58,7 @@ namespace BankTransferSample
                 MessageHandleMode = MessageHandleMode.Sequential
             };
 
-            _broker = new BrokerController().Initialize();
+            _broker = new BrokerController();
 
             var commandExecutedMessageConsumer = new Consumer("CommandExecutedMessageConsumer", "CommandExecutedMessageConsumerGroup", consumerSetting);
             var domainEventHandledMessageConsumer = new Consumer("DomainEventHandledMessageConsumer", "DomainEventHandledMessageConsumerGroup", consumerSetting);
@@ -102,16 +102,16 @@ namespace BankTransferSample
         {
             var scheduleService = ObjectContainer.Resolve<IScheduleService>();
             var waitHandle = new ManualResetEvent(false);
-            var taskId = scheduleService.ScheduleTask(() =>
+            var taskId = scheduleService.ScheduleTask("WaitAllConsumerLoadBalanceComplete", () =>
             {
                 var eventConsumerAllocatedQueues = _eventConsumer.Consumer.GetCurrentQueues();
                 var commandConsumerAllocatedQueues = _commandConsumer.Consumer.GetCurrentQueues();
                 var commandExecutedMessageConsumerAllocatedQueues = _commandResultProcessor.CommandExecutedMessageConsumer.GetCurrentQueues();
                 var domainEventHandledMessageConsumerAllocatedQueues = _commandResultProcessor.DomainEventHandledMessageConsumer.GetCurrentQueues();
-                if (eventConsumerAllocatedQueues.Count() == 4
-                    && commandConsumerAllocatedQueues.Count() == 4
-                    && commandExecutedMessageConsumerAllocatedQueues.Count() == 4
-                    && domainEventHandledMessageConsumerAllocatedQueues.Count() == 4)
+                if (eventConsumerAllocatedQueues.Count() == 1
+                    && commandConsumerAllocatedQueues.Count() == 1
+                    && commandExecutedMessageConsumerAllocatedQueues.Count() == 1
+                    && domainEventHandledMessageConsumerAllocatedQueues.Count() == 1)
                 {
                     waitHandle.Set();
                 }
