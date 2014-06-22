@@ -61,14 +61,9 @@ namespace BankTransferSample.DomainEvents
     /// <summary>转账交易已完成
     /// </summary>
     [Serializable]
-    public class TransferTransactionCompletedEvent : AbstractTransferTransactionEvent, IProcessCompletedEvent
+    public class TransferTransactionCompletedEvent : ProcessCompletedEvent<string>
     {
-        public TransferTransactionCompletedEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
-
-        string IProcessCompletedEvent.ProcessId
-        {
-            get { return TransactionInfo.TransactionId.ToString(); }
-        }
+        public TransferTransactionCompletedEvent(string transactionId) : base(transactionId) { }
     }
     /// <summary>转账交易取消已开始
     /// </summary>
@@ -94,13 +89,8 @@ namespace BankTransferSample.DomainEvents
     /// <summary>转账交易已取消（结束），交易已失败
     /// </summary>
     [Serializable]
-    public class TransferTransactionCanceledEvent : AbstractTransferTransactionEvent, IProcessCompletedEvent
+    public class TransferTransactionCanceledEvent : ProcessCompletedEvent<string>
     {
-        public TransferTransactionCanceledEvent(TransferTransactionInfo transactionInfo) : base(transactionInfo) { }
-
-        string IProcessCompletedEvent.ProcessId
-        {
-            get { return TransactionInfo.TransactionId.ToString(); }
-        }
+        public TransferTransactionCanceledEvent(string transactionId) : base(transactionId) { }
     }
 }

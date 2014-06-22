@@ -35,7 +35,7 @@ namespace BankTransferSample.DomainEvents
     /// <summary>存款交易已完成
     /// </summary>
     [Serializable]
-    public class DepositTransactionCompletedEvent : DomainEvent<string>, IProcessCompletedEvent
+    public class DepositTransactionCompletedEvent : ProcessCompletedEvent<string>
     {
         public string AccountId { get; private set; }
 
@@ -43,11 +43,6 @@ namespace BankTransferSample.DomainEvents
             : base(transactionId)
         {
             AccountId = accountId;
-        }
-
-        string IProcessCompletedEvent.ProcessId
-        {
-            get { return AggregateRootId; }
         }
     }
 }

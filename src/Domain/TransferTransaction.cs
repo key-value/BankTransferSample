@@ -98,7 +98,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferOutConfirmedEvent(TransactionInfo));
                     if (IsTransferInConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCompletedEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCompletedEvent(Id));
                     }
                 }
             }
@@ -114,7 +114,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferInConfirmedEvent(TransactionInfo));
                     if (IsTransferOutConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCompletedEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCompletedEvent(Id));
                     }
                 }
             }
@@ -139,7 +139,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferOutCanceledConfirmedEvent(TransactionInfo));
                     if (IsCancelTransferInConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCanceledEvent(Id));
                     }
                 }
             }
@@ -155,7 +155,7 @@ namespace BankTransferSample.Domain
                     RaiseEvent(new TransferInCanceledConfirmedEvent(TransactionInfo));
                     if (IsCancelTransferOutConfirmed)
                     {
-                        RaiseEvent(new TransferTransactionCanceledEvent(TransactionInfo));
+                        RaiseEvent(new TransferTransactionCanceledEvent(Id));
                     }
                 }
             }
